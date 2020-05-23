@@ -3,6 +3,7 @@ const path = require('path')
 const ip = require("ip")
 const app = express()
 const WebSocket = require('ws')
+const watch = require('node-watch')
 
 const port = process.env.PORT || 8000
 const wsPort = port + 1
@@ -25,6 +26,7 @@ app.get('/', (req, res) => res.sendFile(path.resolve('.', './public/index.html')
 // };
 
 wss.on('connection', ws => ws.send('hello from server'))
+
 app.listen(port, () => {
   let localhostURL = port === 80 ? 'http://localhost/' : `http://localhost:${port}/`
   let ipURL = port === 80 ? `http://${ip.address()}/` : `http://${ip.address()}:${port}/`
