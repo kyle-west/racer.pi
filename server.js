@@ -4,6 +4,7 @@ const ip = require("ip")
 const app = express()
 const WebSocket = require('ws')
 const watch = require('node-watch')
+const { interpolate } = require('./lib/util')
 
 const port = process.env.PORT || 8000
 const wsPort = port + 1
@@ -13,6 +14,14 @@ const wss = new WebSocket.Server({ port: wsPort })
 app.use(express.static('public'))
 
 app.get('/config', (req, res) => res.json({ port, wsPort }))
+
+app.get('/gpio', (req, res) => {
+  const entry = {}
+  entry.name = interpolate(req.query.name)
+  entry.state = interpolate(req.query.state)
+  console.log(entry)
+  res.sendStatus(204)
+})
 
 app.get('/', (req, res) => res.sendFile(path.resolve('.', './public/index.html')))
 

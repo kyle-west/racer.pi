@@ -4,8 +4,9 @@
   "description": "Time derby cars with a raspberry pi",
   "main": "server.js",
   "scripts": {
+    "install:py": "python -m pipenv install",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:gpio": "python main.py",
+    "start:gpio": "python hardware-interface.py",
     "start:server": "node server.js",
     "server:dev": "nodemon server.js",
     "start": "run-p start:server start:gpio",
