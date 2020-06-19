@@ -6,7 +6,7 @@
   "scripts": {
     "install:py": "python -m pipenv install",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:gpio": "python hardware-interface.py",
+    "start:gpio": "npx dotenv-cli python hardware-interface.py",
     "start:server": "node server.js",
     "server:dev": "nodemon server.js",
     "start": "run-p start:server start:gpio",
@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/kyle-west/racer.pi#readme",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "ip": "^1.1.5",
     "node-watch": "^0.6.4",
