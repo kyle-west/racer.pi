@@ -2,6 +2,7 @@ window.serverConfigPromise = window.fetch('/config').then(r => r.json())
 
 
 window.serverConfigPromise.then((config) => {
+  window.LANES = config.LANES
   // Create WebSocket connection.
   const socket = new WebSocket(`ws://${window.location.hostname}:${config.WS_PORT}`);
   

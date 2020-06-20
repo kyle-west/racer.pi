@@ -17,6 +17,13 @@ const {
   WS_PORT,
 } = process.env
 
+const LANES = {
+  1: BTN_LANE_1,
+  2: BTN_LANE_2,
+  3: BTN_LANE_3,
+  4: BTN_LANE_4,
+}
+
 // --------------------------------------------------------------------------
 // Server / WebSocket Config 
 // --------------------------------------------------------------------------
@@ -39,6 +46,7 @@ function broadcast(type, data) {
 // Race data management
 // --------------------------------------------------------------------------
 const RACE = new Race({
+  autoEndWhenNumResults: Object.entries(LANES).length,
   onRaceStart: (data) => {
     console.log(data)
     broadcast('RACE_START', data)
@@ -71,7 +79,7 @@ function raceEntry ({state, name}) {
 // --------------------------------------------------------------------------
 app.use(express.static('public'))
 
-app.get('/config', (req, res) => res.json({ SERVER_PORT, WS_PORT }))
+app.get('/config', (req, res) => res.json({ SERVER_PORT, WS_PORT, LANES }))
 
 app.get('/gpio', (req, res) => {
   const entry = {
