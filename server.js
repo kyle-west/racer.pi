@@ -18,9 +18,40 @@ const {
 } = process.env
 
 // --------------------------------------------------------------------------
+// Server / WebSocket Config 
+// --------------------------------------------------------------------------
+const wss = new WebSocket.Server({ port: WS_PORT })
+
+function Message (type, data = {}) {
+  return JSON.stringify({ type, data })
+}
+
+// Broadcasts data to every connection
+function broadcast(type, data) {
+  wss.clients.forEach(function each(client) {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(Message(type, data))
+    }
+  });
+};
+
+// --------------------------------------------------------------------------
 // Race data management
 // --------------------------------------------------------------------------
-const RACE = new Race({debug: true})
+const RACE = new Race({
+  onRaceStart: (data) => {
+    console.log(data)
+    broadcast('RACE_START', data)
+  },
+  onRaceUpdate: (data) => {
+    console.log(data)
+    broadcast('RACE_UPDATE', data)
+  },
+  onRaceEnd: (data) => {
+    console.log(data)
+    broadcast('RACE_END', data)
+  },
+})
 function raceEntry ({state, name}) {
   // only listen to ButtonDown events
   if (state === 1) {
@@ -33,12 +64,6 @@ function raceEntry ({state, name}) {
     }
   }
 }
-
-// --------------------------------------------------------------------------
-// Server / WebSocket Config 
-// --------------------------------------------------------------------------
-const wss = new WebSocket.Server({ port: WS_PORT })
-
 
 
 // --------------------------------------------------------------------------
@@ -62,17 +87,8 @@ app.get('/', (req, res) => res.sendFile(path.resolve('.', './public/index.html')
 
 
 // --------------------------------------------------------------------------
-// WebSocket handlers
-// --------------------------------------------------------------------------
-// Broadcasts data to every connection
-// function broadcast(type, data = {}) {
-//   wss.clients.forEach(function each(client) {
-//     if (client.readyState === WebSocket.OPEN) {
-//       client.send(JSON.stringify({ type, data }))
-//     }
-//   });
-// };
-wss.on('connection', ws => ws.send('hello from server'))
+
+wss.on('connection', ws => ws.send(Message('RACE_INIT', RACE.latest)))
 
 app.listen(SERVER_PORT, () => {
   let localhostURL = SERVER_PORT === 80 ? 'http://localhost/' : `http://localhost:${SERVER_PORT}/`
