@@ -1,10 +1,9 @@
 require('dotenv').config()
 const express = require('express')
 const path = require('path')
-const ip = require("ip")
 const app = express()
 const WebSocket = require('ws')
-const { interpolate } = require('./lib/util')
+const { interpolate, listenMsg } = require('./lib/util')
 const Race = require('./lib/Race')
 
 const {
@@ -98,8 +97,4 @@ app.get('/', (req, res) => res.sendFile(path.resolve('.', './public/index.html')
 
 wss.on('connection', ws => ws.send(Message('RACE_INIT', RACE.latest)))
 
-app.listen(SERVER_PORT, () => {
-  let localhostURL = SERVER_PORT === 80 ? 'http://localhost/' : `http://localhost:${SERVER_PORT}/`
-  let ipURL = SERVER_PORT === 80 ? `http://${ip.address()}/` : `http://${ip.address()}:${SERVER_PORT}/`
-  console.log(`${localhostURL}\n  ${ipURL}`)
-})
+app.listen(SERVER_PORT, listenMsg({ port: SERVER_PORT, pre: `Node Service Started. Hosted at:` }))
