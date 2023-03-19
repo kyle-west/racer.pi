@@ -1,15 +1,15 @@
-from lib.network import send
+from lib.network import notifyApp
 from lib.gpio import Indicator
 from signal import pause
 import os
 
 def btnPress(item):
     print(item.name, "ON")
-    send({ 'name' :  item.name, 'state' : 1 })
+    notifyApp({ 'name' :  item.name, 'state' : 1 })
 
 def btnRelease(item):
     print(item.name, "OFF")
-    send({ 'name' :  item.name, 'state' : 0 })
+    notifyApp({ 'name' :  item.name, 'state' : 0 })
    
 # The main Red Button on the board
 R = Indicator(name=os.environ.get('BTN_START'), led=18, btn=26, onPress=btnPress, onRelease=btnRelease)
