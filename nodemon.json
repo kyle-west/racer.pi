@@ -1,0 +1,4 @@
+{
+  "verbose": false,
+  "ignore": ["*.py", "public/", "data/", "nodemon.json"]
+}
