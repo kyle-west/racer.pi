@@ -46,7 +46,10 @@ let CURRENT_RACE = new Race(raceEventHandlers)
 // --------------------------------------------------------------------------
 app.use(express.static('public'))
 
-app.get('/config', (req, res) => res.json({ SERVER_PORT, WS_PORT, LANE_COUNT }))
+app.get('/env', (req, res) => {
+  res.setHeader('Content-Type', "application/javascript")
+  res.send(`export default { SERVER_PORT: ${SERVER_PORT}, WS_PORT: ${WS_PORT}, LANE_COUNT: ${LANE_COUNT} } `)
+})
 
 app.post('/race/start', (req, res) => {
   // TODO: call GPIO process to start race / timers
