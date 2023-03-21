@@ -30,6 +30,9 @@ export function inline (value) {
   }
   return ''
 }
+export function css (...args) {
+  return `<style>${String.raw(...args)}</style>`
+}
 
 export class WebComponent extends HTMLElement {
   constructor(template) {
