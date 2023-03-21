@@ -50,3 +50,21 @@ flowchart TD
   ws-server-- Lane States -.->ws-client
   server-- Lane States -.->ws-server;
 ```
+
+## Race Rules
+
+This application follows the official [BSA Derby Rules](https://scoutingevent.com/Download/16069695/OR/2021_Monon_Pinewood_Derby_Rules.pdf), with one modification: the number of lanes is adjustable. You can edit values in the `.env` file.
+
+> All cars will race in a double elimination format. Racing will take place on a four-lane track, with cars randomly chosen to race in heats. A first or second place finish in a heat is considered a “win”, and a third or fourth place finish is considered a “loss”. When a car receives its first loss it will be set aside. Heats will continue to be run until only two cars remain without a loss – those two cars are automatically in the Finals.
+>
+> Then all the cars with one loss will be run in heats again. Cars that receive a second
+loss will be eliminated from the race. Heats will continue until all the cars have been run
+and only two cars remain with a single loss. These two cars will join the other two cars
+in the Finals.
+> 
+> For the Finals, the four remaining cars will run four heats. Each car will run one heat in
+each lane. Cars receive 1 point for a first-place finish, 2 points for second place, 3
+points for third place and 4 points for last place. After four heats, the car with the lowest
+total score is the winner of the derby!
+
+Those in the bottom half of each heat (4th, 5th, & 6th places in a 6 lane track), will be eliminated in the first round until there are only `half the number of lanes` of cars left. This is repeated a second time with the eliminated cars in Round 2. The winners of each round will face each other in the Finals.
