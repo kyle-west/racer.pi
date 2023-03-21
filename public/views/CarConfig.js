@@ -20,12 +20,6 @@ const car = ({ id, name="", weight="" }) => dom`
   </li>
 `
 
-function calculateRaces(racers) {
-  const laneCount = env.LANE_COUNT
-  const racerIds = Object.keys(racers)
-  console.log(laneCount, racerIds)
-}
-
 export default class CarConfig extends WebComponent {
   static is = 'car-group';
 
@@ -35,11 +29,13 @@ export default class CarConfig extends WebComponent {
     Object.entries(this.cars).forEach(([id, carConfig]) => {
       this.addCar({ id, ...carConfig })
     })
-    this.addNewCar()
+    if (Object.keys(this.cars).length < env.LANE_COUNT) {
+      this.addNewCar()
+    }
   }
 
   addCar ({ id, name, weight }) {
-    this.cars[id] = { name, weight }
+    this.cars[id] = { name, weight, id }
     return this.$('#cars').appendChild(car({ id, name, weight }))
   }
 
@@ -77,7 +73,14 @@ export default class CarConfig extends WebComponent {
   }
 
   onClickStartRace () {
-    console.log(calculateRaces(this.cars))
+    // clear out for car "entries" that were never filled out
+    Object.entries(this.cars).forEach(([id, { name, weight }]) => {
+      if (!name?.trim() && !weight) {
+        delete this.cars[id]
+      }
+    })
+    localStorage.set(CarConfig.is, this.cars)
+    document.dispatchEvent(new CustomEvent('view-round-one'))
   }
 }
 

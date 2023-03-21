@@ -9,23 +9,26 @@ const template = wc`
 
   <h2>Double Elimination Race Format</h2>
   <p>
-    All cars will race in a double elimination format. Racing will take place on a ${totalLanes}-lane track, 
-    with cars randomly chosen to race in heats. The first ${halfOfTheLanes} cars that finish in a heat are considered
-    a “win”, and the last ${halfOfTheLanes} cars to finish are considered a “loss”. When a car receives its first 
-    loss it will be set aside. Heats will continue to be run until only ${halfOfTheLanes} cars remain without a loss 
-    – those ${halfOfTheLanes} cars are automatically in the Finals.
+    All cars will race in a double elimination format. Racing will take place on
+    a ${totalLanes}-lane track, with cars randomly chosen to race in heats. The
+    first ${halfOfTheLanes} cars that finish in a heat are considered a “win”, and
+    the last ${halfOfTheLanes} cars to finish are considered a “loss”. When a car
+    receives its first loss it will be set aside. Heats will continue to be run 
+    until only ${halfOfTheLanes} cars remain without a loss – those ${halfOfTheLanes}
+    cars are automatically in the Finals.
   </p>
 
   <p>
-    Then all the cars with one loss will be run in heats again. Cars that receive a second
-    loss will be eliminated from the race. Heats will continue until all the cars have been run
-    and only ${halfOfTheLanes} cars remain with a single loss. These ${halfOfTheLanes} cars will
-    join the other ${halfOfTheLanes} cars in the Finals.
+    Then all the cars with one loss will be run in heats again. Cars that receive a
+    second loss will be eliminated from the race. Heats will continue until all the
+    cars have been run and only ${halfOfTheLanes} cars remain with a single loss.
+    These ${halfOfTheLanes} cars will join the other ${halfOfTheLanes} cars in the
+    Finals.
   </p>
 
   <p>
-    For the Finals, the ${totalLanes} remaining cars will run ${totalLanes} heats. Each car will run one heat in
-    each lane. Cars receive:
+    For the Finals, the ${totalLanes} remaining cars will run ${totalLanes} heats.
+    Each car will run one heat in each lane. Cars receive:
   </p>
   <ul>
     <li>1 point for a first-place finish</li>
@@ -34,7 +37,8 @@ const template = wc`
     <li>etc...</li>
   </ul> 
   <p>
-    After ${totalLanes} heats, the car with the lowest total score is the winner of the derby!
+    After ${totalLanes} heats, the car with the lowest total score is the winner of
+    the derby!
   </p>
 
   <button name="continue">Continue</button>
