@@ -23,6 +23,13 @@ export function wc (...args) {
 export function dom (...args) {
   return wc(...args)()
 }
+export function inline (value) {
+  if (value !== null && value !== undefined && value !== false) {
+    if (Array.isArray) return value.join('\n')
+    return value
+  }
+  return ''
+}
 
 export class WebComponent extends HTMLElement {
   constructor(template) {
@@ -42,6 +49,7 @@ export class WebComponent extends HTMLElement {
   
   render (template) {
     const templateConstructor = template || this.template
+    cleanChildren(this._shadowRoot)
     this._shadowRoot.appendChild(templateConstructor());
   }
 
