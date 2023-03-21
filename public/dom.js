@@ -36,6 +36,8 @@ export class WebComponent extends HTMLElement {
     this.onclick = this.getEventHandler('onClick');
     this.onsubmit = this.getEventHandler('onSubmit');
     this.oninput = this.getEventHandler('onInput');
+    this.onkeydown = this.getEventHandler('onKeyDown');
+    this.onkeyup = this.getEventHandler('onKeyUp');
   }
   
   render (template) {
@@ -47,7 +49,7 @@ export class WebComponent extends HTMLElement {
     return (evt) => {
       const target = evt.composedPath()?.[0] || evt.target
       const { name } = target
-      const handler = name && this[eventName + kebabToPascal(name)]
+      const handler = (name && this[eventName + kebabToPascal(name)]) || this[eventName]
       if (handler) {
         evt.element = target
         return handler.bind(this)(evt)
