@@ -13,6 +13,11 @@ _Stay tuned for a super cool multi-generational project._
 
 # Application Architecture
 
+We want the track to have control of race starts and lane events. This may seem a little complicated for such a "simple" project, but it comes with three wins:
+1. Realtime frontend updates of race times/results
+2. GPIO events can be mocked entirely - great for writing tests for the application logic
+3. Event Driven: features are coupled to real life occurrences, not data models
+
 <!-- Please view this maarkup with a Mermaid renderer (built into GitHub, or with VS Code + Mermaid Preview extentsion) -->
 
 ```mermaid
@@ -51,6 +56,35 @@ flowchart TD
   server-- Converts Race Data -->csv;
   participants-->client;
 ```
+
+### Hardware Layer
+Responsibilities:
+- Read physical lane events
+- Time each lane
+- Notify Application of events and results
+  - calls `POST <server-port>/gpio/start` when a new race has started
+  - calls `POST <server-port>/gpio/time?lane=<lane-number>&time=<lane-time>` when a lane has finished
+
+### Application Control Layer
+Responsibilities:
+- Respond to events from the GPIO service
+  - Forward (via WebSockets) lane events to the frontend
+- Persist race data from the frontend
+- Serve client application files
+
+### User Interface
+Responsibilities:
+- Enforce BSA racing guidelines
+  - Determine lane assignments for individual cars
+  - Determine stages of racing (rounds and heats) 
+  - Determine wins and rankings
+- Display realtime race results for each heat
+  - Respond to events from the WebSocket service
+- Store ephemeral data relating to user flow
+
+
+### Environment
+To keep all services in sync, the `.env` file at the root of the project maintains configuration constants that are shared or globally known, such as the port locations of callable services and track information.
 
 ## Race Rules
 
