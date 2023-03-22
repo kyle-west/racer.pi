@@ -1,7 +1,7 @@
 import env from '/env'
 
-function notify (name, details) {
-  document.dispatchEvent(new CustomEvent(name, { details }))
+function notify (name, detail) {
+  document.dispatchEvent(new CustomEvent(name, { detail }))
 }
 
 const socket = new WebSocket(`ws://${window.location.hostname}:${env.WS_PORT}`);

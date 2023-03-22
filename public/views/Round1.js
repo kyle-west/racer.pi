@@ -2,6 +2,8 @@ import env from '/env'
 import { WebComponent, wc, dom, register, inline, css } from '../dom.js'
 import CarConfig from './CarConfig.js'
 import { localStorage } from '../storage.js'
+import { Timer } from '../timer.js'
+import { formatOrdinals } from '../util.js'
 
 const totalLanes = env.LANE_COUNT
 const halfOfTheLanes = Math.floor(totalLanes/2)
@@ -66,6 +68,23 @@ export default class Round1 extends WebComponent {
     this.eliminated = []
   }
 
+  connectedCallback() {
+    const raceStart = this.onRaceStart.bind(this)
+    const raceUpdate = this.onRaceUpdate.bind(this)
+    const raceEnd = this.onRaceEnd.bind(this)
+
+    document.addEventListener('race-start', raceStart)
+    document.addEventListener('race-update', raceUpdate)
+    document.addEventListener('race-end', raceEnd)
+
+    this.cleanup = () => {
+      document.removeEventListener('race-start', raceStart)
+      document.removeEventListener('race-update', raceUpdate)
+      document.removeEventListener('race-end', raceEnd)
+    }
+  }
+  disconnectedCallback () { this.cleanup() }
+
   onClickContinue () {
     this.template = round
     this.render()
@@ -95,30 +114,47 @@ export default class Round1 extends WebComponent {
         <h2>Heat ${this.heatNumber}</h2>
         <table>
           <thead>
-            <tr><th>Assignment</th><th>Car Name</th><th>Weight</th><th>Time</th><th>Place</th><th>Status</th></tr>
+            <tr><th>Assignment</th><th>Car Name</th><th>Time</th><th>Place</th><th>Status</th></tr>
           </thead>
           <tbody>
-          ${inline(Object.entries(assignments).map(([laneNumber, { name, weight }]) => `
-            <tr id="lane-${laneNumber}">
+          ${inline(Object.entries(assignments).map(([laneNumber, { name }]) => `
+            <tr id="heat-${this.heatNumber}-lane-${laneNumber}">
               <td>Lane ${laneNumber}</td>
               <th>${name}</th>
-              <td>${weight} oz</td>
-              <td id="lane-${laneNumber}-time"></td>
-              <td id="lane-${laneNumber}-place"></td>
-              <td id="lane-${laneNumber}-status"></td>
+              <td id="heat-${this.heatNumber}-lane-${laneNumber}-time"></td>
+              <td id="heat-${this.heatNumber}-lane-${laneNumber}-place"></td>
+              <td id="heat-${this.heatNumber}-lane-${laneNumber}-status"></td>
             </tr>
           `))}
           </tbody>
         </table>
-
-        <button id="action" name="start-race">Start!</button>
-        <div id="${this.heatNumber}-results"></div>
       </section>
     `)
   }
 
-  onClickStartRace () {
-    // TODO: call endpoint and listen to lane events
+  onRaceStart () {
+    const timerDOM = this.$('#timer')
+    this.timer = this.timer || new Timer((time) => {
+      timerDOM.innerHTML = `${time}ms`
+    })
+    this.timer.start()
+  }
+
+  onRaceUpdate ({ detail: { lanes = {} } }) {
+    this.laneData = lanes
+    Object.entries(lanes).sort(([_,a],[__,b]) => a-b).forEach(([laneNumber, time], idx) => {
+      this.$(`#heat-${this.heatNumber}-lane-${laneNumber}-time`).innerHTML = time+ 's'
+      
+      const order = formatOrdinals(idx + 1)
+      this.$(`#heat-${this.heatNumber}-lane-${laneNumber}-place`).innerHTML = order
+
+      const status = idx < halfOfTheLanes ? 'Continuing' : 'Eliminated'
+      this.$(`#heat-${this.heatNumber}-lane-${laneNumber}-status`).innerHTML = status
+    })
+  }
+
+  onRaceEnd (data) {
+    this.timer?.stop()
   }
 }
 
