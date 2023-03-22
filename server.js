@@ -9,8 +9,8 @@ const Race = require('./lib/Race')
 const {
   SERVER_PORT,
   WS_PORT,
-  // GPIO_PORT,
   LANE_COUNT,
+  TRACK_LENGTH_IN_FEET,
 } = process.env
 
 // --------------------------------------------------------------------------
@@ -37,7 +37,7 @@ function broadcast(type, data) {
 const raceEventHandlers = {
   onRaceStart: (data) => broadcast('RACE_START', data),
   onRaceUpdate: (data) => broadcast('RACE_UPDATE', data),
-  onRaceEnd: (data) => broadcast('RACE_END', data),
+  onRaceEnd: (data) => broadcast('RACE_END', data)
 }
 let CURRENT_RACE = new Race(raceEventHandlers)
 
@@ -48,18 +48,16 @@ app.use(express.static('public'))
 
 app.get('/env', (req, res) => {
   res.setHeader('Content-Type', "application/javascript")
-  res.send(`export default { SERVER_PORT: ${SERVER_PORT}, WS_PORT: ${WS_PORT}, LANE_COUNT: ${LANE_COUNT} } `)
+  res.send(`export default {
+    SERVER_PORT: ${SERVER_PORT},
+    WS_PORT: ${WS_PORT},
+    LANE_COUNT: ${LANE_COUNT},
+    TRACK_LENGTH_IN_FEET: ${TRACK_LENGTH_IN_FEET},
+  }`)
 })
 
-app.post('/race/start', (req, res) => {
-  // TODO: call GPIO process to start race / timers
+app.post('/gpio/start', (req, res) => {
   CURRENT_RACE.start()
-  res.sendStatus(204)
-})
-
-app.post('/race/end', (req, res) => {
-  // TODO: call GPIO process to kill timers
-  CURRENT_RACE.end()
   res.sendStatus(204)
 })
 
@@ -74,6 +72,6 @@ app.get('/', (req, res) => res.sendFile(path.resolve('.', './public/index.html')
 
 // --------------------------------------------------------------------------
 
-wss.on('connection', ws => ws.send(Message('RACE_INIT', CURRENT_RACE.latest)))
+wss.on('connection', ws => ws.send(Message('RACE_CURRENT', CURRENT_RACE.latest)))
 
 app.listen(SERVER_PORT, listenMsg({ port: SERVER_PORT, pre: `Node Service Started. Hosted at:` }))

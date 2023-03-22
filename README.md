@@ -25,7 +25,7 @@ flowchart TD
     gpio[GPIO Handler - Python]
   end
 
-  subgraph State Management
+  subgraph Application Control
     server[Application Server - NodeJS]
     ws-server[Server Socket]
   end
@@ -40,15 +40,16 @@ flowchart TD
     ws-client[Client Socket]
   end
 
-  gpio-- Triggers Race -->track
+  track-- Triggers Race -->gpio
   track-- Reads Lane Events -->gpio
   gpio-- Notifies Lane Times -->server;
-  server-- Notifies Race Start -->gpio;
-  client-- Requests Race Start -->server;
-  client-- Submits Race Participants -->server;
+  gpio-- Notifies Race Start -->server;
+  client-- Store Race Results to FS -->server;
   ws-client-- Realtime Race Results -->client;
   ws-server-- Lane States -.->ws-client
   server-- Lane States -.->ws-server;
+  server-- Converts Race Data -->csv;
+  participants-->client;
 ```
 
 ## Race Rules
