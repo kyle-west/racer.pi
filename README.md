@@ -11,6 +11,9 @@ We hope by the end to be able to record each race and display the results live o
 _Stay tuned for a super cool multi-generational project._
 
 
+https://user-images.githubusercontent.com/18150457/227034838-89dd19ab-e7dd-4d19-a7b1-5251358dc0d0.mov
+
+
 # Application Architecture
 
 We want the track to have control of race starts and lane events. This may seem a little complicated for such a "simple" project, but it comes with three wins:
