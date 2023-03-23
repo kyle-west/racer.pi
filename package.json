@@ -6,12 +6,14 @@
   "scripts": {
     "install:py": "python -m pipenv install",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:gpio": "npx dotenv-cli python hardware-interface.py",
+    "start:gpio": "npx dotenv-cli python main.py",
     "start:server": "node server.js",
     "server:dev": "nodemon server.js",
     "mock:gpio": "nodemon mock-gpio-service.js",
     "start": "run-p start:server start:gpio",
-    "start:dev": "run-p server:dev start:gpio"
+    "start:dev": "run-p server:dev start:gpio",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run"
   },
   "repository": {
     "type": "git",
@@ -37,6 +39,8 @@
     "ws": "^7.4.6"
   },
   "devDependencies": {
+    "cypress": "^12.8.1",
+    "cypress-dotenv": "^2.0.0",
     "nodemon": "^2.0.4"
   }
 }
