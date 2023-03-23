@@ -40,7 +40,7 @@ export class WebComponent extends HTMLElement {
     this.template = template
     this._shadowRoot = this.attachShadow({ mode: "open" });
     this.$ = (selector) => this._shadowRoot.querySelector(selector)
-    this.$$ = (selector) => this._shadowRoot.querySelectorAll(selector)
+    this.$$ = (selector) => [...(this._shadowRoot.querySelectorAll(selector) || [])]
     this.render(template)
 
     this.onclick = this.getEventHandler('onClick');

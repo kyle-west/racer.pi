@@ -7,6 +7,7 @@
 projRoot=`git rev-parse --show-toplevel`
 source "$projRoot/.env"
 applicationServiceURL="http://localhost:$SERVER_PORT"
+EXT_COUNT="$1"
 
 # configure the mock behavior
 MIN_LANE_TIME=3
@@ -40,7 +41,7 @@ echo "Starting Race!"
 
 curl -X POST "$applicationServiceURL/gpio/start"
 
-for lane in `seq 1 $LANE_COUNT`; do
+for lane in `seq 1 ${EXT_COUNT:-$LANE_COUNT}`; do
   mockLaneResult "$lane" `getRandomLaneTime` &
 done
 

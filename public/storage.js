@@ -6,6 +6,20 @@ function interpolate (value) {
   }
 }
 
+function mergeByPath (oldData, newData) {
+  if (!oldData || oldData === newData) return newData
+  return Object.fromEntries(Object.entries(newData).map(([path, value]) => {
+    const data = oldData[path]
+    if (Array.isArray(value)) {
+      return [path, [...(data||[]), ...value]]
+    }
+    if (typeof value === 'object' && value !== null) {
+      return [path, {...data, ...mergeByPath(data, value)}]
+    }
+    return [path, value]
+  }))
+}
+
 function createStorage (type) {
   function get (key, defaultValue = null) {
     const value = window[type].getItem(key)
@@ -16,7 +30,12 @@ function createStorage (type) {
     return window[type].setItem(key, JSON.stringify(value))
   }
 
-  return { get, set }
+  function merge(key, newData) {
+    const data = mergeByPath(get(key, newData), newData)
+    return set(key, data)
+  }
+
+  return { get, set, merge }
 }
 
 export const sessionStorage = createStorage('sessionStorage')
