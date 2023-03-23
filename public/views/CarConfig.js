@@ -7,7 +7,7 @@ const template = wc`
   <p>
     Before we begin, we need to record the participants in today's Derby. Please enter all of the cars info below:
   </p>
-  <ul id="cars"></ul>
+  <ol id="cars"></ol>
   <button name="add-car">Add Car</button>
   <button name="start-race">Start Race</button>
 `
