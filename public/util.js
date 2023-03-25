@@ -18,3 +18,5 @@ export function formatOrdinals (n) {
   const suffix = suffixes.get(rule);
   return `${n}${suffix}`;
 }
+
+export const deferredAction = (action) => setTimeout(action, 0)

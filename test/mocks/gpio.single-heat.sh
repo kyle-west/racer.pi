@@ -10,8 +10,8 @@ applicationServiceURL="http://localhost:$SERVER_PORT"
 EXT_COUNT="$1"
 
 # configure the mock behavior
-MIN_LANE_TIME=4
-MAX_LANE_TIME=7
+MIN_LANE_TIME=1
+MAX_LANE_TIME=3
 
 # ==============================================================
 

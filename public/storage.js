@@ -8,11 +8,11 @@ export function interpolate (value) {
 
 function mergeByPath (oldData, newData) {
   if (!oldData || oldData === newData) return newData
+  if (Array.isArray(newData)) {
+    return [...(oldData||[]), ...newData]
+  }
   return Object.fromEntries(Object.entries(newData).map(([path, value]) => {
-    const data = oldData[path]
-    if (Array.isArray(value)) {
-      return [path, [...(data||[]), ...value]]
-    }
+    const data = oldData[path]  
     if (typeof value === 'object' && value !== null) {
       return [path, {...data, ...mergeByPath(data, value)}]
     }
