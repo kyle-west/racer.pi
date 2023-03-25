@@ -26,6 +26,14 @@ fnm install 16;
 fnm use 16;
 ```
 
+Now you are ready to start using `npm` to install the program application. Please run:
+
+```sh
+npm install;
+```
+
+See `package.json` for avaliable `scripts`. Run `npm start` to run the fullstack, or `npm start:server` to run just the frontend parts.
+
 # Application Architecture
 
 We want the track to have control of race starts and lane events. This may seem a little complicated for such a "simple" project, but it comes with three wins:
