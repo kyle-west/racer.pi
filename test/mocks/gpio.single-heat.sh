@@ -10,21 +10,15 @@ applicationServiceURL="http://localhost:$SERVER_PORT"
 EXT_COUNT="$1"
 
 # configure the mock behavior
-MIN_LANE_TIME=3
-MAX_LANE_TIME=8
+MIN_LANE_TIME=4
+MAX_LANE_TIME=7
 
 # ==============================================================
 
 getRandomFloat () {
-  printf '%s' $(echo "scale=8; $RANDOM/3276" | bc )
-}
-
-getRandomLaneTime () {
-  while true; do
-    laneTime=`getRandomFloat`
-    (( $(bc <<< "$laneTime < $MIN_LANE_TIME || $laneTime > $MAX_LANE_TIME") )) || break
-  done
-  echo "$laneTime"
+  v=$[100 + (RANDOM % 100)]$[1000 + (RANDOM % 1000)]
+  v=$[$MIN_LANE_TIME + (RANDOM % ($MAX_LANE_TIME - $MIN_LANE_TIME))].${v:1:2}${v:4:3}
+  echo $v
 }
 
 mockLaneResult () {
@@ -42,7 +36,7 @@ echo "Starting Race!"
 curl -X POST "$applicationServiceURL/gpio/start"
 
 for lane in `seq 1 ${EXT_COUNT:-$LANE_COUNT}`; do
-  mockLaneResult "$lane" `getRandomLaneTime` &
+  mockLaneResult "$lane" `getRandomFloat` &
 done
 
 # wait for all lanes to finish
