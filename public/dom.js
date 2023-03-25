@@ -1,3 +1,4 @@
+import { interpolate } from './storage.js';
 import { kebabToPascal } from './util.js';
 
 function cleanChildren (node) {
@@ -35,13 +36,14 @@ export function css (...args) {
 }
 
 export class WebComponent extends HTMLElement {
-  constructor(template) {
+  constructor(template, { defer } = {}) {
     super();
     this.template = template
+    this.attrs = {}
     this._shadowRoot = this.attachShadow({ mode: "open" });
     this.$ = (selector) => this._shadowRoot.querySelector(selector)
     this.$$ = (selector) => [...(this._shadowRoot.querySelectorAll(selector) || [])]
-    this.render(template)
+    !defer && this.render(template)
 
     this.onclick = this.getEventHandler('onClick');
     this.onsubmit = this.getEventHandler('onSubmit');
@@ -66,6 +68,12 @@ export class WebComponent extends HTMLElement {
         return handler.bind(this)(evt)
       }
     }
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) return
+    this.attrs[name] = interpolate(newValue)
+    this.render()
   }
 }
 

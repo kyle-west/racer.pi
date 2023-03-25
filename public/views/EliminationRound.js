@@ -50,7 +50,7 @@ const styles = css`
     font-size: 30px;
     white-space: pre-wrap;
   }
-  `
+`
   
 const template = wc`
   ${styles}

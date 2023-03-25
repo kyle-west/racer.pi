@@ -1,4 +1,4 @@
-function interpolate (value) {
+export function interpolate (value) {
   try {
     return JSON.parse(value)
   } catch (_) {
