@@ -3,7 +3,7 @@ import { WebComponent, wc, dom, register, inline, css } from '../dom.js'
 import CarConfig from './CarConfig.js'
 import { localStorage } from '../storage.js'
 import { Timer } from '../timer.js'
-import { formatOrdinals } from '../util.js'
+import { deferredAction, formatOrdinals } from '../util.js'
 
 const totalLanes = env.LANE_COUNT
 const halfOfTheLanes = Math.floor(totalLanes/2)
@@ -50,7 +50,7 @@ const styles = css`
     font-size: 30px;
     white-space: pre-wrap;
   }
-`
+  `
   
 const template = wc`
   ${styles}
@@ -213,6 +213,11 @@ export default class EliminationRound extends WebComponent {
         return this.laneAssignments[lane]
       })
 
+    Object.entries(this.laneAssignments).forEach(([lane, racer]) => {
+      const time = this.laneData[lane]
+      deferredAction(() => localStorage.merge(`times:${racer.id}`, [ time ]))
+    })
+
     const loserIds = racers.slice(halfOfTheLanes, totalLanes).map(({id}) => id)
     this.eliminated = this.continuing.filter(({id}) => loserIds.includes(id))
     this.continuing = this.continuing.filter(({id}) => !loserIds.includes(id))
@@ -252,7 +257,6 @@ export default class EliminationRound extends WebComponent {
         }
       })
     })
-    localStorage.set(`times`, times)
 
     if (this.finalHeat) {
       localStorage.set('finalists', [

@@ -5,6 +5,7 @@ import Heat from './Heat.js';
 import CarConfig from './CarConfig.js';
 import LaneEventWC from './LaneEventWC.js';
 import TimerComponent from './Timer.js';
+import { deferredAction } from '../util.js';
 
 const totalLanes = env.LANE_COUNT
 
@@ -161,6 +162,7 @@ export default class FinalRound extends LaneEventWC {
           Object.entries(this.laneAssignments).map(([lane, { id, name }]) => {
             const time = this.laneData[lane]
             const points = rank.findIndex(([laneNumber]) => laneNumber === lane) + 1
+            deferredAction(() => localStorage.merge(`times:${id}`, [ time ]))
             return [lane, { id, name, time, points }]
           })
         )
