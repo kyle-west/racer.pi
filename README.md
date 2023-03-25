@@ -13,6 +13,18 @@ _Stay tuned for a super cool multi-generational project._
 
 https://user-images.githubusercontent.com/18150457/227034838-89dd19ab-e7dd-4d19-a7b1-5251358dc0d0.mov
 
+# Installing for the first time
+This program requires Python3 and NodeJS. Python3 should already have come on your Raspberry Pi. For best Node installation, we reccomend FNM:
+
+```sh
+# install fast node manager
+curl -fsSL https://fnm.vercel.app/install | bash;
+source ~/.bashrc; # needed for using immediately 
+
+# install Node16
+fnm install 16;
+fnm use 16;
+```
 
 # Application Architecture
 
