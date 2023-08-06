@@ -69,6 +69,7 @@ app.post('/gpio/time', (req, res) => {
 })
 
 app.get('/', (req, res) => res.sendFile(path.resolve('.', './public/index.html')))
+app.get('/cars', (req, res) => res.sendFile(path.resolve('.', './public/cars.html')))
 
 // --------------------------------------------------------------------------
 
