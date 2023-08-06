@@ -3,31 +3,23 @@ import { localStorage } from '../storage.js';
 
 const styles = css`
   #cars {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
     padding: 0;
     max-width: 800px;
+    width: 100%;
     margin: 0 auto;
+    border-collapse: collapse;
   }
 
   .car {
-    display: flex;
-    list-style: none;
-    margin: 0;
-    padding: 1rem;
-    gap: 2rem;
     border: 1px solid #ccc;
-    border-radius: 0.5rem;
-    width: 100%;
+    margin-bottom: 2rem;
+  }
+  
+  td {
+    padding: 1rem;
   }
 
   .car .stats {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 0.5rem;
     font-size: 1.25rem;
   }
 
@@ -49,25 +41,41 @@ const styles = css`
     content: 'average';
     background-color: lightblue;
   }
+
+  .flex {
+    display: flex;
+    height: 100%;
+    width: 100%;
+  }
+
+  .columns {
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+  }
 `
 
 const template = wc`
   ${styles}
-  <ul id="cars"></ul>
+  <table id="cars"></table>
 `
 
 const car = ({ id, name="", weight="" }) => dom`
-  <li class="car" id="${id}">
-    <div>
+  <tr class="car" id="${id}">
+    <td class="place"></td>
+    <td>
       <h2>${name} (${weight}oz)</h2>
       <div class="rank"></div>
-    </div>
-    <div class="stats">
-      <div class="bestTime"></div>
-      <div class="averageTime"></div>
-    </div>
-    <div class="times"></div>
-  </li>
+    </td>
+    <td class="stats">
+      <div class="flex columns">
+        <div class="bestTime"></div>
+        <div class="averageTime"></div>
+      </div>
+    </td>
+    <td class="times"></td>
+    <td class="points"></td>
+  </tr>
 `
 
 export default class CarLeaderBoard extends WebComponent {
