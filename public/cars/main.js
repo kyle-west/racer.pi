@@ -55,6 +55,29 @@ const styles = css`
   }
 `
 
+function getPoints () {
+  const finals = localStorage.get('finals', null)
+  if (!finals) return {}
+
+  const totalPoints = {}
+  Object.values(finals.heat).forEach((heat) => {
+    Object.values(heat).forEach(({ id, points }) => {
+      totalPoints[id] = totalPoints[id] || 0
+      totalPoints[id] += points
+    })
+  })
+
+  const rank = Object.fromEntries(
+    Object.entries(totalPoints)
+      .sort(([_,a], [__,b]) => a - b)
+      .map(([id], idx) => [id, idx + 1])
+  )
+
+  return Object.fromEntries(
+    Object.keys(totalPoints).map(id => ([id, { points: totalPoints[id], rank: rank[id]}]))
+  )
+}
+
 const template = wc`
   ${styles}
   <table id="cars"></table>
@@ -63,7 +86,7 @@ const template = wc`
 const car = ({ id, name="", weight="" }) => dom`
   <tr class="car" id="${id}">
     <td class="place"></td>
-    <td>
+    <td class="title">
       <h2>${name} (${weight}oz)</h2>
       <div class="rank"></div>
     </td>
@@ -103,19 +126,39 @@ export default class CarLeaderBoard extends WebComponent {
         return [id, { bestTime, averageTime, times: carTimes }]
       })
       .sort(([, a], [, b]) => a.bestTime - b.bestTime)
-    
+
+    const score = getPoints()
+
     times.forEach(([id, { bestTime, averageTime, times }]) => {
       this.$(`#${id} .bestTime`).innerHTML = bestTime ? `${bestTime.toFixed(3)}s` : ''
       this.$(`#${id} .averageTime`).innerHTML = averageTime ? `${averageTime.toFixed(3)}s` : ''
       this.$(`#${id} .times`).innerHTML = times.map((time) => `${time.toFixed(3)}`).join(', ')
+
+      const { points, rank } = score[id] || {}
+      this.$(`#${id} .points`).innerHTML = points ? `${points} points` : ''
+      this.$(`#${id} .rank`).innerHTML = rank ? `Rank ${rank}` : ''
     })
 
-    this.sortCars(times)
+    this.sortCars(times, score)
   }
 
-  sortCars (times) {
-    const cars = this.$('#cars')
-    times.forEach(([id]) => {
+  sortCars (times, score) {
+    const cars = this.$('#cars');
+
+    const byFinalScore = ([aID, a], [bID, b]) => {
+      const aScore = score[aID]
+      const bScore = score[bID]
+      
+      if (aScore && bScore) {
+        return aScore.points - bScore.points
+      }
+      if (!aScore && bScore) return 1
+      if (aScore && !bScore) return -1
+
+      return a.bestTime - b.bestTime
+    }
+
+    [...times].sort(byFinalScore).forEach(([id]) => {
       const car = this.$(`#${id}`)
       cars.appendChild(car)
     })
