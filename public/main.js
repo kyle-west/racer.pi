@@ -5,7 +5,6 @@ import Round1 from './views/Round1.js'
 import Round2 from './views/Round2.js'
 import { localStorage } from './storage.js'
 import FinalRound from './views/FinalRound.js'
-import Results from './views/Results.js'
 
 const appNode = document.getElementById('app')
 
@@ -29,4 +28,7 @@ document.addEventListener('view-car-config', () => attach(appNode, CarConfig))
 document.addEventListener('view-round-one', () => attach(appNode, Round1))
 document.addEventListener('view-round-two', () => attach(appNode, Round2))
 document.addEventListener('view-final-round', () => attach(appNode, FinalRound))
-document.addEventListener('view-results', () => attach(appNode, Results))
+document.addEventListener('view-results', () => {
+  localStorage.set('results-committed', 'true')
+  window.location.href = '/cars'
+})

@@ -1,5 +1,6 @@
 import { WebComponent, wc, css, dom, register, attach } from '../dom.js'
 import { localStorage } from '../storage.js';
+import { formatOrdinals } from '../util.js';
 
 const styles = css`
   #cars {
@@ -13,6 +14,10 @@ const styles = css`
   .car {
     border: 1px solid #ccc;
     margin-bottom: 2rem;
+  }
+
+  .weight {
+    font-weight: normal;
   }
   
   td {
@@ -33,13 +38,13 @@ const styles = css`
   }
 
   .car .bestTime::after {
-    content: 'best';
-    background-color: lightgreen;
+    content: 'fastest';
+    border: 1px solid grey;
   }
 
   .car .averageTime::after {
     content: 'average';
-    background-color: lightblue;
+    border: 1px solid grey;
   }
 
   .flex {
@@ -52,6 +57,53 @@ const styles = css`
     flex-direction: column;
     justify-content: center;
     gap: 0.5rem;
+  }
+
+  .best-personal-time {
+    text-decoration: underline;
+    font-weight: bold;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    color: black;
+  }
+
+  .tags > * {
+    font-size: 0.75rem;
+    padding: 0.25rem;
+    border-radius: 0.5rem;
+  }
+
+  .lowest-time {
+    background-color: lightgreen;
+  }
+
+  .lowest-average {
+    background-color: lightblue;
+  }
+
+  .lightest-car {
+    background-color: lightyellow;
+  }
+
+  .heaviest-car {
+    background-color: lightgray;
+  }
+
+  .finalist {
+    border: 2px solid black;
+  }
+
+  .place-1 {
+    background-color: darkblue;
+    color: white;
+  }
+
+  .place-2, .place-3 {
+    background-color: gold;
   }
 `
 
@@ -67,14 +119,8 @@ function getPoints () {
     })
   })
 
-  const rank = Object.fromEntries(
-    Object.entries(totalPoints)
-      .sort(([_,a], [__,b]) => a - b)
-      .map(([id], idx) => [id, idx + 1])
-  )
-
   return Object.fromEntries(
-    Object.keys(totalPoints).map(id => ([id, { points: totalPoints[id], rank: rank[id]}]))
+    Object.keys(totalPoints).map(id => ([id, { points: totalPoints[id] }]))
   )
 }
 
@@ -87,8 +133,8 @@ const car = ({ id, name="", weight="" }) => dom`
   <tr class="car" id="${id}">
     <td class="place"></td>
     <td class="title">
-      <h2>${name} (${weight}oz)</h2>
-      <div class="rank"></div>
+      <h2>${name} <small class="weight">(${weight}oz)</small></h2>
+      <div class="tags"></div>
     </td>
     <td class="stats">
       <div class="flex columns">
@@ -106,8 +152,24 @@ export default class CarLeaderBoard extends WebComponent {
   constructor () {
     super(template)
     this.cars = localStorage.get('car-group', {})
+    this.initStats()
     this.initUI()
     this.updateTimes()
+  }
+
+  initStats () {
+    let lightest = Infinity
+    let heaviest = 0
+    Object.entries(this.cars).forEach(([id, carConfig]) => {
+      if (carConfig.weight < lightest) {
+        lightest = carConfig.weight
+        this.lightest = id
+      }
+      if (carConfig.weight > heaviest) {
+        heaviest = carConfig.weight
+        this.heaviest = id
+      }
+    })
   }
 
   initUI () {
@@ -132,17 +194,26 @@ export default class CarLeaderBoard extends WebComponent {
     times.forEach(([id, { bestTime, averageTime, times }]) => {
       this.$(`#${id} .bestTime`).innerHTML = bestTime ? `${bestTime.toFixed(3)}s` : ''
       this.$(`#${id} .averageTime`).innerHTML = averageTime ? `${averageTime.toFixed(3)}s` : ''
-      this.$(`#${id} .times`).innerHTML = times.map((time) => `${time.toFixed(3)}`).join(', ')
+      this.$(`#${id} .times`).innerHTML = times
+        .map((time) => `${time.toFixed(3)}`)
+        .join(', ')
+        .replace(bestTime.toFixed(3), `<span class="best-personal-time">${bestTime.toFixed(3)}</span>`)
 
-      const { points, rank } = score[id] || {}
+      const { points } = score[id] || {}
       this.$(`#${id} .points`).innerHTML = points ? `${points} points` : ''
-      this.$(`#${id} .rank`).innerHTML = rank ? `Rank ${rank}` : ''
+
+      if (points) {
+        this.$(`#${id}`).classList.add('finalist')
+      } else {
+        this.$(`#${id}`).classList.remove('finalist')
+      }
     })
 
     this.sortCars(times, score)
   }
 
   sortCars (times, score) {
+    const completed = localStorage.get('results-committed', false)
     const cars = this.$('#cars');
 
     const byFinalScore = ([aID, a], [bID, b]) => {
@@ -155,14 +226,51 @@ export default class CarLeaderBoard extends WebComponent {
       if (!aScore && bScore) return 1
       if (aScore && !bScore) return -1
 
+      // TODO: if they have the same points, how should we break the tie?
+      // right now I picked fastest time as the tie breaker
+      // but maybe we should do average time?
       return a.bestTime - b.bestTime
     }
 
-    [...times].sort(byFinalScore).forEach(([id]) => {
+    let lowestOverallTime = Infinity;
+    let lowestAverageTime = Infinity;
+
+    if (completed) {
+      times.forEach(([_, { bestTime, averageTime }]) => {
+        if (bestTime < lowestOverallTime) lowestOverallTime = bestTime
+        if (averageTime < lowestAverageTime) lowestAverageTime = averageTime
+      })
+    }
+
+    [...times].sort(byFinalScore).forEach(([id, { bestTime, averageTime }], idx) => {
       const car = this.$(`#${id}`)
+      
+      if (completed) {
+        this.$(`#${id}`).classList.add(`place-${idx + 1}`)
+      } else {
+        this.$(`#${id}`).classList.remove(`place-${idx + 1}`)
+      }
+
+      this.$(`#${id} .place`).innerHTML = completed ? `${formatOrdinals(idx + 1)} Place` : ''
+
+      this.$(`#${id} .tags`).innerHTML = `
+        ${completed && bestTime === lowestOverallTime ? `<span class="lowest-time">Lowest Time</span>` : ''}
+        ${completed && averageTime === lowestAverageTime ? `<span class="lowest-average">Lowest Average</span>` : ''}
+        ${this.lightest === id ? `<span class="lightest-car">Lightest</span>` : ''}
+        ${this.heaviest === id ? `<span class="heaviest-car">Heaviest</span>` : ''}
+      `
+
       cars.appendChild(car)
     })
   }
+  connectedCallback() {
+    const handleStorage = () => this.updateTimes()
+    window.addEventListener('storage', handleStorage)
+    this.cleanup = () => {
+      window.removeEventListener('storage', handleStorage)
+    }
+  }
+  disconnectedCallback () { this.cleanup() }
 }
 
 register(CarLeaderBoard)
