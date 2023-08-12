@@ -115,6 +115,10 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# lock files
+package-lock.json
+
 #python
 __pycache__
 *.pyc
+

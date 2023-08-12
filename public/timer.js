@@ -15,5 +15,6 @@ export class Timer {
   stop () {
     clearInterval(this.timer)
     this.timer = null
+    return this.time
   }
 }

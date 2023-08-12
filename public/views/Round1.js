@@ -20,8 +20,8 @@ const template = wc`
         cars are automatically in the Finals.
       </p>
 
-      <button name="continue">Begin Round 1</button>
       <button name="configure-racers">Configure Racers</button>
+      <button name="continue">Begin Round 1</button>
     </div>
   </${EliminationRound.is}>
 `
