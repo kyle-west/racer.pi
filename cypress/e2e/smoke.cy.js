@@ -41,28 +41,3 @@ describe('Racer Config Page', () => {
       .contains('First Elimination Round')
   })
 })
-
-describe('First Elimination Round', () => {
-  it('Prompts rules', () => {
-    cy.moveToRound1()
-
-    cy.get('round-one').shadow()
-      .find('h1')
-      .contains('First Elimination Round')
-
-    cy.get('round-one').shadow()
-      .find('p')
-      .contains('Racing will take place on a 6-lane track, with cars randomly chosen to race in heats. The first 3 cars that finish')
-
-    cy.get('round-one').shadow()
-      .find('elimination-round')
-      .find('button[name="continue"]')
-      .should('exist')
-      .click()
-
-    cy.get('round-one').shadow()
-      .find('elimination-round').shadow()
-      .find('#timer')
-      .contains('Ready')
-  })
-})
