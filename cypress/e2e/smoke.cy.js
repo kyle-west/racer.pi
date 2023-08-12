@@ -1,6 +1,6 @@
 describe('Welcome Page', () => {
   it('Landing page Renders', () => {
-    cy.moveToWelcomePage()
+    cy.moveToHomePage()
 
     cy.get('welcome-message').shadow()
       .find('button')

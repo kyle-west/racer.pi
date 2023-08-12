@@ -26,12 +26,12 @@
 
 // import '@testing-library/cypress/add-commands'
 
-Cypress.Commands.add('moveToWelcomePage', (view) => {
+Cypress.Commands.add('moveToHomePage', (view) => {
   cy.visit(`http://localhost:${Cypress.env('SERVER_PORT')}`)
 })
 
 Cypress.Commands.add('moveToRacersPage', (view) => {
-  cy.moveToWelcomePage()
+  cy.moveToHomePage()
   cy.get('welcome-message').shadow()
       .find('button')
       .click()
@@ -76,20 +76,12 @@ Cypress.Commands.add('moveToRound1', (view) => {
     .click()
 })
 
-Cypress.Commands.add('moveToRound1', (view) => {
-  cy.seedDB('car-group')
-  cy.moveToRacersPage()
-  cy.get('car-group').shadow()
-    .find('button[name="start-race"]')
-    .should('exist')
-    .click()
-})
-
-Cypress.Commands.add('roundOneAcceptHeatTimes', (view) => {
-  cy.get('round-one').shadow()
-    .find('elimination-round').shadow()
-    .find('[name="accept"]')
-    .contains('Accept & Continue')
+Cypress.Commands.add('moveToRound2', (view) => {
+  cy.moveToHomePage()
+  cy.seedDBAll('round1')
+  cy.reload()
+  cy.shadowDrill('round-one', 'elimination-round', 'button[name="accept"]')
+    .contains('Go to Next Round')
     .click()
 })
 
