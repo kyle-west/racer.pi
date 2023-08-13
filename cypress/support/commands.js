@@ -26,17 +26,13 @@
 
 // import '@testing-library/cypress/add-commands'
 
-Cypress.Commands.add('moveToHomePage', (view) => {
-  cy.visit(`http://localhost:${Cypress.env('SERVER_PORT')}`)
+Cypress.Commands.add('shadowFind', (...levels) => {
+  let node;
+  levels.forEach((level) => {
+    node = node ? node.shadow().find(level) : cy.get(level)
+  })
+  return node;
 })
-
-Cypress.Commands.add('moveToRacersPage', (view) => {
-  cy.moveToHomePage()
-  cy.get('welcome-message').shadow()
-      .find('button')
-      .click()
-})
-
 
 Cypress.Commands.add('seedDB', (target) => {
   cy.fixture(`storage__${target}`).then((data) => {
@@ -56,6 +52,17 @@ Cypress.Commands.add('seedDBAll', (target) => {
   })
 })
 
+Cypress.Commands.add('moveToHomePage', () => {
+  cy.visit(`http://localhost:${Cypress.env('SERVER_PORT')}`)
+})
+
+Cypress.Commands.add('moveToRacersPage', () => {
+  cy.moveToHomePage()
+  cy.get('welcome-message').shadow()
+      .find('button')
+      .click()
+})
+
 Cypress.Commands.add('simulateHeat', (numberOfLanes = 6) => {
   const MIN_LANE_TIME=1
   const MAX_LANE_TIME=3
@@ -67,7 +74,7 @@ Cypress.Commands.add('simulateHeat', (numberOfLanes = 6) => {
   })
 })
 
-Cypress.Commands.add('moveToRound1', (view) => {
+Cypress.Commands.add('moveToRound1', () => {
   cy.seedDB('car-group')
   cy.moveToRacersPage()
   cy.get('car-group').shadow()
@@ -76,19 +83,20 @@ Cypress.Commands.add('moveToRound1', (view) => {
     .click()
 })
 
-Cypress.Commands.add('moveToRound2', (view) => {
+Cypress.Commands.add('moveToRound2', () => {
   cy.moveToHomePage()
   cy.seedDBAll('round1')
   cy.reload()
-  cy.shadowDrill('round-one', 'elimination-round', 'button[name="accept"]')
+  cy.shadowFind('round-one', 'elimination-round', 'button[name="accept"]')
     .contains('Go to Next Round')
     .click()
 })
 
-Cypress.Commands.add('shadowDrill', (...levels) => {
-  let node;
-  levels.forEach((level) => {
-    node = node ? node.shadow().find(level) : cy.get(level)
-  })
-  return node;
+Cypress.Commands.add('moveToFinalRound', () => {
+  cy.moveToHomePage()
+  cy.seedDBAll('round2')
+  cy.reload()
+  cy.shadowFind('round-two', 'elimination-round', 'button[name="accept"]')
+    .contains('Go to Next Round')
+    .click()
 })
