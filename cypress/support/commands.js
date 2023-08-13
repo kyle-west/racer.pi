@@ -42,18 +42,28 @@ Cypress.Commands.add('seedDB', (target) => {
   })
 })
 
-Cypress.Commands.add('seedDBAll', (target) => {
+Cypress.Commands.add('seedDBAll', (target, filter = (x) => x) => {
   cy.fixture(`multi__${target}`).then((data) => {
     cy.window().then((win) => {
-      Object.entries(data).forEach(([db, info]) => {
+      const filteredData = filter(data)
+      Object.entries(filteredData).forEach(([db, info]) => {
         win.localStorage.setItem(db, JSON.stringify(info))
       })
     })
   })
 })
 
+Cypress.Commands.add('seedDBRaw', (target, value) => {
+  cy.window().then((win) => {
+    win.localStorage.setItem(target, JSON.stringify(value))
+  })
+})
+
 Cypress.Commands.add('moveToHomePage', () => {
   cy.visit(`http://localhost:${Cypress.env('SERVER_PORT')}`)
+})
+Cypress.Commands.add('moveToCarsPage', () => {
+  cy.visit(`http://localhost:${Cypress.env('SERVER_PORT')}/cars`)
 })
 
 Cypress.Commands.add('moveToRacersPage', () => {
