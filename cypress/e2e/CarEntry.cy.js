@@ -39,5 +39,12 @@ describe('Racer Config Page', () => {
     cy.get('round-one').shadow()
       .find('h1')
       .contains('First Elimination Round')
+
+    cy.window().then((win) => {
+      const cars = win.localStorage.getItem('car-group')
+      expect(cars).contains('Fast Boi')
+      expect(cars).contains('4.99')
+      expect(cars).contains('pinecar')
+    })
   })
 })
