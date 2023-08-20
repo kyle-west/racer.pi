@@ -105,21 +105,22 @@ export default class FinalRound extends LaneEventWC {
   }
 
   newHeat(assignments, finalHeat) {
+    this.$$('final-heat').forEach(heat => heat.setAttribute('completed', ''))
 
     if (this.currentHeat) {
       this.$('#heats').prepend(this.currentHeat)
     }
-
+    
     this.finalHeat = finalHeat
     this.heatNumber = (this.heatNumber || 0) + 1;
     this.laneAssignments = assignments || this.getHeatMemberLaneAssignments()
-
+    
     const heatElem = document.createElement(FinalHeat.is)
     heatElem.setAttribute('round', 3)
     heatElem.setAttribute('heat', this.heatNumber)
     heatElem.laneAssignments = this.laneAssignments
     this.currentHeat = heatElem
-
+    
     this.$('#current-heat').prepend(heatElem)
   }
 

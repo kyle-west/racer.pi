@@ -45,7 +45,7 @@ const styles = css`
 
 export default class Heat extends WebComponent {
   static is = 'race-heat';
-  static observedAttributes = ['round', 'heat'];
+  static observedAttributes = ['round', 'heat', 'completed'];
 
   constructor () {   
     super(() => dom`
@@ -61,7 +61,7 @@ export default class Heat extends WebComponent {
             <tr id="lane-${laneNumber}">
               <td>Lane ${laneNumber}</td>
               <th>${name}</th>
-              <td id="lane-${laneNumber}-time"></td>
+              <td id="lane-${laneNumber}-time" name="laneTime"></td>
               <td id="lane-${laneNumber}-place"></td>
               <td id="lane-${laneNumber}-status"></td>
             </tr>
@@ -83,11 +83,14 @@ export default class Heat extends WebComponent {
     return rank < halfOfTheLanes ? win : 'Eliminated'
   }
 
-  updateLaneInfo (laneEntries) {  
+  updateLaneInfo (laneEntries) {
+    this._lastEntries = laneEntries
     laneEntries.forEach(([laneNumber, time], idx) => {
       if (!this.$(`#lane-${laneNumber}`)) return // for partially full track
-
-      this.$(`#lane-${laneNumber}-time`).innerHTML = time+ 's'
+      
+      this.$(`#lane-${laneNumber}-time`).innerHTML = this.attrs.completed 
+        ? `${time}s` 
+        : `<input value="${time}" class="timeInput" name="laneTime" data-lane="${laneNumber}" type="number" step="0.000000000001"/>`
       
       const rank = idx + 1
       const order = formatOrdinals(rank)
@@ -102,6 +105,30 @@ export default class Heat extends WebComponent {
   restart () {
     this.$$(`td[id]`).forEach(elem => elem.innerHTML = '')
     this.$$(`tr`).forEach(elem => elem.className = '')
+  }
+
+  onAttributeChange (name) {
+    if (name === 'completed') {
+      this.updateLaneInfo(this._lastEntries)
+    }
+  }
+
+  // THIS IS WHERE I LEFT OFF LAST   <<<=========================================================
+  onInputLaneTime(event) {
+    console.log('input', event)
+    // TODO: add confirmation dialog
+  }
+  onBlurLaneTime(event) {
+    console.log('blur', event)
+    // TODO: add confirmation dialog
+  }
+
+  // The blur event only fires when the webComponent loses focus
+  onClickLaneTime(event) {
+    if (this.__activeInput && this.__activeInput !== event.element.value) {
+      this.__activeInput = event.element.value
+      this.onBlurLaneTime(event)
+    }
   }
 }
 

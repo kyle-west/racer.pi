@@ -50,6 +50,8 @@ export class WebComponent extends HTMLElement {
     this.oninput = this.getEventHandler('onInput');
     this.onkeydown = this.getEventHandler('onKeyDown');
     this.onkeyup = this.getEventHandler('onKeyUp');
+    this.onfocus = this.getEventHandler('onFocus');
+    this.onblur = this.getEventHandler('onBlur');
   }
   
   render (template) {
@@ -61,8 +63,8 @@ export class WebComponent extends HTMLElement {
   getEventHandler (eventName) {
     return (evt) => {
       const target = evt.composedPath()?.[0] || evt.target
-      const { name } = target
-      const handler = (name && this[eventName + kebabToPascal(name)]) || this[eventName]
+      const { name, dataset } = target
+      const handler = (name && this[eventName + kebabToPascal(dataset.name || name)]) || this[eventName]
       if (handler) {
         evt.element = target
         return handler.bind(this)(evt)
@@ -72,8 +74,12 @@ export class WebComponent extends HTMLElement {
 
   attributeChangedCallback(name, oldValue, newValue) {
     if (oldValue === newValue) return
-    this.attrs[name] = interpolate(newValue)
-    this.render()
+    this.attrs[name] = newValue === '' || interpolate(newValue);
+    if (this.onAttributeChange) {
+      this.onAttributeChange(name, oldValue, newValue)
+    } else {
+      this.render()
+    }
   }
 }
 
