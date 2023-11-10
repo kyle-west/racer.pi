@@ -126,3 +126,30 @@ points for third place and 4 points for last place. After four heats, the car wi
 total score is the winner of the derby!
 
 Those in the bottom half of each heat (4th, 5th, & 6th places in a 6 lane track), will be eliminated in the first round until there are only `half the number of lanes` of cars left. This is repeated a second time with the eliminated cars in Round 2. The winners of each round will face each other in the Finals.
+
+## Debugging & Testing
+
+The frontend has some utilities to quickly test and debug certain situations. You can activate these utils in the console of the browser since the `DEBUG` object lives off of the window.
+
+```js
+DEBUG.preload.cars() // load a set of mock cars to run races against into the browsers localStorage
+
+
+DEBUG.reset() // nuke localStorage to start from a clean slate
+```
+
+### Simulating a Heat
+
+If you are running just the frontend with `npm run server:dev` or `npm run server:start`, then you will need to mock lane events to test the application. We have a testing script that does just that. You will need to run it in a new terminal tab, alongside your server.
+
+```
+bash test/mocks/gpio.single-heat.sh <number of cars>
+```
+
+So if I have 6 cars racing in one heat, then I should run:
+
+```
+bash test/mocks/gpio.single-heat.sh 6
+```
+
+Remember that number is important. You should run the exact number of cars that are expected - just like you would in a real race. So if a final heat only has 4 cars, put `4` as the argument to that script.

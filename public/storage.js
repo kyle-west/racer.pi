@@ -35,7 +35,7 @@ function createStorage (type) {
     return set(key, data)
   }
 
-  return { get, set, merge }
+  return { get, set, merge, clear: () => window[type].clear() }
 }
 
 export const sessionStorage = createStorage('sessionStorage')

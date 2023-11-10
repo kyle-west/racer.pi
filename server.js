@@ -3,7 +3,8 @@ const express = require('express')
 const path = require('path')
 const app = express()
 const WebSocket = require('ws')
-const { interpolate, listenMsg } = require('./lib/util')
+const { interpolate, listenMsg, toCSVString } = require('./lib/util')
+const { saveData } = require('./lib/save')
 const Race = require('./lib/Race')
 
 const {
@@ -45,6 +46,7 @@ let CURRENT_RACE = new Race(raceEventHandlers)
 // Service handlers
 // --------------------------------------------------------------------------
 app.use(express.static('public'))
+app.use(express.json())
 
 app.get('/env', (req, res) => {
   res.setHeader('Content-Type', "application/javascript")
@@ -68,8 +70,30 @@ app.post('/gpio/time', (req, res) => {
   res.sendStatus(204)
 })
 
+app.post('/data/race', (req, res) => {
+  const recordName = new Date().toISOString().replace(/:/g, '.')
+
+  const csv = toCSVString(Race.toCSVArray(req.body))
+  saveData(`${recordName}.json`, JSON.stringify(req.body))
+  const savedFileName = saveData(`${recordName}.csv`, csv)
+  
+  return res.json({ downloadUrl: `/data/${savedFileName}` })
+})
+
+app.get('/data/:raceFile', (req, res) => {
+  res.download(path.resolve('.', 'data', req.params.raceFile))
+})
+
 app.get('/', (req, res) => res.sendFile(path.resolve('.', './public/index.html')))
 app.get('/cars', (req, res) => res.sendFile(path.resolve('.', './public/cars.html')))
+
+
+// --------------------------------------------------------------------------
+// Testing and debug endpoints
+// --------------------------------------------------------------------------
+
+// these are used for quickly debugging the frontend, rather than having to type each car in manually
+app.get('/dev/preload/cars', (req, res) => res.sendFile(path.resolve('.', 'cypress/fixtures/storage__car-group.json')))
 
 // --------------------------------------------------------------------------
 

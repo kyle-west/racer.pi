@@ -41,6 +41,11 @@ const template = wc`
     the derby!
   </p>
 
+  <p>
+    You can <a target="_blank" href="/cars">open the leader board</a> in a new tab if
+    you want to see just the results.
+  </p>
+
   <button name="continue">Continue</button>
 `
 export default class Welcome extends WebComponent {
