@@ -1,0 +1,85 @@
+Round,Heat,Lane,Name,Time,Status
+Round 1,Heat 1,Lane 1,taco,1.9013298924679516,Eliminated
+Round 1,Heat 1,Lane 2,Fast Boi,1.0715043098049812,Continuing
+Round 1,Heat 1,Lane 3,Good Lookin',2.65766779923983,Eliminated
+Round 1,Heat 1,Lane 4,slim jim,2.86900739576487,Eliminated
+Round 1,Heat 1,Lane 5,bacon,1.023045832199855,Continuing
+Round 1,Heat 1,Lane 6,pizza,1.4343628532435169,Continuing
+Round 1,Heat 2,Lane 1,cat mobile,2.2354611561516458,Eliminated
+Round 1,Heat 2,Lane 2,car,1.9985844701711484,Eliminated
+Round 1,Heat 2,Lane 3,snake on a car,1.831427465768869,Continuing
+Round 1,Heat 2,Lane 4,dogsRule,2.881953453057487,Eliminated
+Round 1,Heat 2,Lane 5,lobster,1.5580908934358333,Continuing
+Round 1,Heat 2,Lane 6,burgermobile,1.4973603562885769,Continuing
+Round 1,Heat 3,Lane 1,pizza,2.378634639728735,Eliminated
+Round 1,Heat 3,Lane 2,Fast Boi,1.1013196736124122,Continuing
+Round 1,Heat 3,Lane 3,snake on a car,2.2091231702788803,Continuing
+Round 1,Heat 3,Lane 4,pinecar,1.5609767008094453,Continuing
+Round 1,Heat 3,Lane 5,lobster,2.772848427202078,Eliminated
+Round 1,Heat 3,Lane 6,bacon,2.8735545379544174,Eliminated
+Round 1,Heat 4,Lane 1,snake on a car,2.0894092380106777,Finalist
+Round 1,Heat 4,Lane 2,burgermobile,2.1337227725762204,Finalist
+Round 1,Heat 4,Lane 3,pinecar,2.5856036698426452,Finalist
+Round 1,Heat 4,Lane 4,Fast Boi,2.7196618392665712,Eliminated
+Round 2,Heat 1,Lane 1,cat mobile,1.9995947241941532,Eliminated
+Round 2,Heat 1,Lane 2,slim jim,1.913659507012445,Eliminated
+Round 2,Heat 1,Lane 3,car,1.7649944824338553,Continuing
+Round 2,Heat 1,Lane 4,taco,1.4851608676848311,Continuing
+Round 2,Heat 1,Lane 5,dogsRule,2.2389538417655475,Eliminated
+Round 2,Heat 1,Lane 6,Good Lookin',1.160823117294719,Continuing
+Round 2,Heat 2,Lane 1,Fast Boi,1.432678160615672,Continuing
+Round 2,Heat 2,Lane 2,Good Lookin',2.1825534595768366,Eliminated
+Round 2,Heat 2,Lane 3,lobster,2.8608177435344357,Eliminated
+Round 2,Heat 2,Lane 4,pizza,2.990943319766877,Eliminated
+Round 2,Heat 2,Lane 5,taco,1.3940370405024902,Continuing
+Round 2,Heat 2,Lane 6,bacon,1.045982309945153,Continuing
+Round 2,Heat 3,Lane 1,bacon,1.5213602680833698,Finalist
+Round 2,Heat 3,Lane 2,car,1.8387782983641698,Eliminated
+Round 2,Heat 3,Lane 3,taco,1.3315420183683435,Finalist
+Round 2,Heat 3,Lane 4,Fast Boi,1.7184965859832597,Finalist
+Final Round,Heat 1,Lane 1,snake on a car,2.2880842819568046,2 pts
+Final Round,Heat 1,Lane 2,burgermobile,2.8756054399340716,6 pts
+Final Round,Heat 1,Lane 3,pinecar,2.5609680591215302,4 pts
+Final Round,Heat 1,Lane 4,taco,1.8686424130052686,1 pts
+Final Round,Heat 1,Lane 5,bacon,2.3714466164006742,3 pts
+Final Round,Heat 1,Lane 6,Fast Boi,2.5620372363647843,5 pts
+Final Round,Heat 2,Lane 1,Fast Boi,1.1618734568008753,2 pts
+Final Round,Heat 2,Lane 2,snake on a car,2.8008072877132864,6 pts
+Final Round,Heat 2,Lane 3,burgermobile,2.155808301443833,4 pts
+Final Round,Heat 2,Lane 4,pinecar,2.359744514795203,5 pts
+Final Round,Heat 2,Lane 5,taco,1.3177094658284365,3 pts
+Final Round,Heat 2,Lane 6,bacon,1.0281525899060537,1 pts
+Final Round,Heat 3,Lane 1,bacon,1.5113683736586325,1 pts
+Final Round,Heat 3,Lane 2,Fast Boi,2.4162850302199006,3 pts
+Final Round,Heat 3,Lane 3,snake on a car,2.528538517286668,5 pts
+Final Round,Heat 3,Lane 4,burgermobile,2.0444002032787854,2 pts
+Final Round,Heat 3,Lane 5,pinecar,2.566512002182516,6 pts
+Final Round,Heat 3,Lane 6,taco,2.4276642758050806,4 pts
+Final Round,Heat 4,Lane 1,taco,2.48000091622203,5 pts
+Final Round,Heat 4,Lane 2,bacon,2.197378533480085,2 pts
+Final Round,Heat 4,Lane 3,Fast Boi,2.400608680633691,3 pts
+Final Round,Heat 4,Lane 4,snake on a car,2.633428569012449,6 pts
+Final Round,Heat 4,Lane 5,burgermobile,1.85522605401354,1 pts
+Final Round,Heat 4,Lane 6,pinecar,2.4529368929422017,4 pts
+Final Round,Heat 5,Lane 1,pinecar,2.9378977236800683,6 pts
+Final Round,Heat 5,Lane 2,taco,2.382596240422905,5 pts
+Final Round,Heat 5,Lane 3,bacon,1.3809448408102454,2 pts
+Final Round,Heat 5,Lane 4,Fast Boi,2.1637461379278755,4 pts
+Final Round,Heat 5,Lane 5,snake on a car,1.038925082234579,1 pts
+Final Round,Heat 5,Lane 6,burgermobile,1.7134520517318061,3 pts
+Final Round,Heat 6,Lane 1,burgermobile,2.114129976554902,4 pts
+Final Round,Heat 6,Lane 2,pinecar,1.020051918315621,1 pts
+Final Round,Heat 6,Lane 3,taco,2.2582188071968163,5 pts
+Final Round,Heat 6,Lane 4,bacon,1.9299308849584764,3 pts
+Final Round,Heat 6,Lane 5,Fast Boi,2.4859741704954703,6 pts
+Final Round,Heat 6,Lane 6,snake on a car,1.788760108661969,2 pts
+,,,,,
+,,,,,
+Results,,,,,
+Place,Name,Points,,,
+1,bacon,12,WINNER,,
+2,burgermobile,20,,,
+3,snake on a car,22,,,
+4,taco,23,,,
+5,Fast Boi,23,,,
+6,pinecar,26,,,
