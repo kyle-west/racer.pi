@@ -2,13 +2,30 @@ import { WebComponent, wc, css, dom, register, attach } from '../dom.js'
 import { localStorage } from '../storage.js';
 import { formatOrdinals } from '../util.js';
 
+import '../debug.js'
+
 const styles = css`
-  #cars {
+  #cars, #after-race {
     padding: 0;
     max-width: 800px;
     width: 100%;
     margin: 0 auto;
     border-collapse: collapse;
+  }
+
+  #after-race {
+    margin: 20px auto;
+    display: flex;
+  }
+
+  [name="download"] {
+    background-color: lightblue;
+  }
+
+  [name="delete-race-data"] {
+    margin-left: auto;
+    background-color: red;
+    color: white;
   }
 
   .car {
@@ -142,7 +159,8 @@ const template = wc`
   <div id="message"></div>
   <table id="cars"></table>
   <div id="after-race" class="hidden">
-    <!-- <button name="download">Download Race Data</button> -->
+    <button name="download">Save Race & Download CSV</button>
+    <button name="delete-race-data">Delete All Data & Start New Race</button>
   </div>
 `
 
@@ -344,6 +362,36 @@ export default class CarLeaderBoard extends WebComponent {
     }
   }
   disconnectedCallback () { this.cleanup() }
+
+  onClickDownload () {
+    console.log('download')
+
+    const races = localStorage.get('races', {})
+    const finals = localStorage.get('finals', {})
+
+    const renameLanes = (lanes) => Object.fromEntries(
+      Object.entries(lanes).map(([laneNumber, data]) => ([`lane_${laneNumber}`, data]))
+    )
+    const renameHeats = (heats) => Object.fromEntries(
+      Object.entries(heats).map(([heatNumber, data]) => ([`heat_${heatNumber}`, renameLanes(data)]))
+    )
+
+    const data = {
+      round_1: renameHeats(races.round?.[1].heat),
+      round_2: renameHeats(races.round?.[2].heat),
+      final_round: renameHeats(finals.heat)
+    }
+
+    console.log(data)
+
+    window
+      .fetch('/data/race', { method: 'POST', body: JSON.stringify(data), headers: { 'Content-Type': 'application/json' } })
+      .then((res) => res.json())
+      .then(({ downloadUrl }) => {
+        console.log({ downloadUrl })
+        downloadUrl && window.open(downloadUrl)
+      })
+  }
 }
 
 register(CarLeaderBoard)

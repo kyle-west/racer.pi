@@ -6,6 +6,8 @@ import Round2 from './views/Round2.js'
 import { localStorage } from './storage.js'
 import FinalRound from './views/FinalRound.js'
 
+import './debug.js'
+
 const appNode = document.getElementById('app')
 
 const finalsData = localStorage.get('finals')
