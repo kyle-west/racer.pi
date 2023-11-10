@@ -4,6 +4,7 @@ import CarConfig from './CarConfig.js'
 import { localStorage } from '../storage.js'
 import { Timer } from '../timer.js'
 import { deferredAction, formatOrdinals } from '../util.js'
+import ClearDataButton from './ClearDataButton.js';
 
 const totalLanes = env.LANE_COUNT
 const halfOfTheLanes = Math.floor(totalLanes/2)
@@ -57,6 +58,7 @@ const template = wc`
   <slot name="start-message"></slot>
   <pre id="timer"></pre>
   <div id="heats"></div>
+  <${ClearDataButton.is}></${ClearDataButton.is}>
 `
 
 export default class EliminationRound extends WebComponent {

@@ -182,27 +182,53 @@ describe('Delete All Data & Start New Race button', () => {
     cy.seedDBAll('finals')
     cy.seedDBRaw('results-committed', true)
     cy.reload()
+    cy.on('window:confirm', () => false);
 
     containsInOrder([ "1st Place", "2nd Place", "3rd Place", "4th Place", "5th Place", "6th Place", "7th Place", "8th Place", "9th Place", "10th Place", "11th Place", "12th Place", "13th Place" ])
     
-    // clicking cancel should cancel the delete
-    cy.on('window:confirm', () => false);
-    cy.shadowFind('car-leader-board', '[name="delete-race-data"]')
-    .click()
+    
+    // all the data
+    cy.shadowFind('car-leader-board', 'clear-data-button#clearEverything', '[name="delete-all"]')
+      .click()
+
+    // just race information
+    cy.shadowFind('car-leader-board', 'clear-data-button#clearRaceData', '[name="delete-race-data"]')
+      .click()
   })
   
   it('clicking ok should execute the delete', () => {
     cy.seedDBAll('finals')
     cy.seedDBRaw('results-committed', true)
     cy.reload()
+    cy.on('window:confirm', () => true);
     
     containsInOrder([ "1st Place", "2nd Place", "3rd Place", "4th Place", "5th Place", "6th Place", "7th Place", "8th Place", "9th Place", "10th Place", "11th Place", "12th Place", "13th Place" ])
 
-    // clicking cancel should cancel the delete
-    cy.on('window:confirm', () => true);
-    cy.shadowFind('car-leader-board', '[name="delete-race-data"]')
-    .click()
-    
+    // just the race information
+    cy.shadowFind('car-leader-board', 'clear-data-button#clearRaceData', '[name="delete-race-data"]')
+      .click()
+      
+    // should still show the cars
+    containsInOrder([
+      "Fast Boi",
+      "Good Lookin'",
+      "slim jim",
+      "pizza",
+      "taco",
+      "bacon",
+      "lobster",
+      "cat mobile",
+      "dogsRule",
+      "snake on a car",
+      "car",
+      "burgermobile",
+      "pinecar",
+    ])
+      
+    // all the data
+    cy.shadowFind('car-leader-board', 'clear-data-button#clearEverything', '[name="delete-all"]')
+      .click()
+      
     cy.shadowFind('car-leader-board', '#message')
       .contains('please visit the main page to register')
   })

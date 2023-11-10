@@ -2,6 +2,8 @@ import env from '/env'
 import { WebComponent, wc, dom, register, css } from '../dom.js'
 import { localStorage } from '../storage.js';
 
+import ClearDataButton from './ClearDataButton.js';
+
 const styles = css`
   .button-row {
     display: flex;
@@ -27,15 +29,15 @@ const template = wc`
   <div class="button-row">
     <button name="add-car">Add Car</button>
     <button name="start-race">Start Race</button>
-    <button name="clear">Clear All</button>
   </div>
+  <${ClearDataButton.is} all=""></${ClearDataButton.is}>
 `
 
 const car = ({ id, name="", weight="" }) => dom`
   <li class="car">
     <label class="name">Car Name: <input id="${id}" type="text" name="car-name" value="${name}"/></label>
     <label class="weight">Weight: <input id="${id}-weight" type="number" name="car-weight" value="${weight}"/>oz</label>
-    <button name="remove-car" title="Remove Car" data-id="${id}">X</button>
+    <button name="remove-car" title="Remove Car" data-id="${id}" no-styles>X</button>
   </li>
 `
 
@@ -100,16 +102,6 @@ export default class CarConfig extends WebComponent {
     })
     localStorage.set(CarConfig.is, this.cars)
     document.dispatchEvent(new CustomEvent('view-round-one'))
-  }
-
-  onClickClear() {
-    const shouldClear = window.confirm(
-      'This action will remove all race and car data, are you sure you want to continue?'
-    )
-    if (shouldClear) {
-      localStorage.clear()
-      window.location.reload()
-    }
   }
 }
 
