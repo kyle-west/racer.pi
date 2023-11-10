@@ -35,7 +35,7 @@ const template = wc`
 
   <div class="action hidden">
     <button name="restart">Redo Race</button>
-    <button name="accept">Accept & Continue</button>
+    <button name="accept" class="hidden">Accept & Continue</button>
   </div>
 
   <div id="heats">
@@ -79,6 +79,7 @@ export default class FinalRound extends LaneEventWC {
   onClickAccept () {
     this.$('#timer').clear()
     this.$('.action').classList.add('hidden')
+    this.$('.action [name="accept"]').classList.add('hidden')
 
     this.commitHeat()
 
@@ -94,6 +95,7 @@ export default class FinalRound extends LaneEventWC {
     this.$('#timer').clear()
     this.currentHeat.restart()
     this.$('.action').classList.add('hidden')
+    this.$('.action [name="accept"]').classList.add('hidden')
   }
 
   getHeatMemberLaneAssignments() {
@@ -124,11 +126,19 @@ export default class FinalRound extends LaneEventWC {
     this.currentHeat = heatElem
 
     this.$('#current-heat').prepend(heatElem)
+    this.$('.action').classList.add('hidden')
   }
 
   onRaceUpdate ({ detail: { lanes = {} } }) {
-    this.laneData = lanes
-    const laneEntries = Object.entries(lanes).sort(([_,a],[__,b]) => a-b)
+    this.$('.action').classList.remove('hidden')
+
+    // if we get data for a lane that isn't got a car in it - just ignore it
+    const activeLanes = Object.fromEntries(
+      Object.entries(lanes).filter(([lane]) => this.laneAssignments[lane])
+    )
+
+    this.laneData = activeLanes
+    const laneEntries = Object.entries(activeLanes).sort(([_,a],[__,b]) => a-b)
 
     if (laneEntries.length > 0) {
       const [lane, time] = laneEntries[0]
@@ -136,21 +146,20 @@ export default class FinalRound extends LaneEventWC {
       timer.stop?.()
       timer.display?.(`Time: ${time.toFixed(3)}s ${this.laneAssignments[lane].name} Wins!`)
     }
-
+    
     if (this.currentHeat) {
       this.currentHeat.updateLaneInfo(laneEntries)
     }
-    
-    // const { detail: { lanes = {} } } = event
   }
 
   onRaceStart () {
     this.$('#timer').start()
     this.$('.action').classList.add('hidden')
+    this.$('.action [name="accept"]').classList.add('hidden')
   }
 
   onRaceEnd () {
-    this.$('.action').classList.remove('hidden')
+    this.$('.action [name="accept"]').classList.remove('hidden')
   }
 
   endGame () {

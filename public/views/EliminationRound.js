@@ -138,7 +138,7 @@ export default class EliminationRound extends WebComponent {
 
         <div class="action hidden">
           <button name="restart">Redo Race</button>
-          <button name="accept">Accept & Continue</button>
+          <button name="accept" class="hidden">Accept & Continue</button>
         </div
       </section>
     `)
@@ -157,8 +157,14 @@ export default class EliminationRound extends WebComponent {
   }
 
   onRaceUpdate ({ detail: { lanes = {} } }) {
-    this.laneData = lanes
-    const laneEntries = Object.entries(lanes).sort(([_,a],[__,b]) => a-b)
+    // if we get data for a lane that isn't got a car in it - just ignore it
+    const activeLanes = Object.fromEntries(
+      Object.entries(lanes).filter(([lane]) => this.laneAssignments[lane])
+    )
+
+    this.$('.action').classList.remove('hidden')
+    this.laneData = activeLanes
+    const laneEntries = Object.entries(activeLanes).sort(([_,a],[__,b]) => a-b)
 
     if (laneEntries.length === 1) {
       this.timer?.stop()
@@ -186,12 +192,13 @@ export default class EliminationRound extends WebComponent {
   }
 
   onRaceEnd () {
-    this.$('.action').classList.remove('hidden')
+    this.$('.action [name="accept"]').classList.remove('hidden')
     this._unsubmitted = true
   }
 
   onClickRestart () {
     this.$('.action').classList.add('hidden')
+    this.$('.action [name="accept"]').classList.add('hidden')
     this.$$(`[id="heat-${this.heatNumber}"] td[id]`).forEach(elem => elem.innerHTML = '')
     this.$$(`[id="heat-${this.heatNumber}"] .Continuing`).forEach(elem => elem.classList.remove('Continuing'))
     this.$$(`[id="heat-${this.heatNumber}"] .Eliminated`).forEach(elem => elem.classList.remove('Eliminated'))
@@ -307,6 +314,8 @@ export default class EliminationRound extends WebComponent {
           .slice(halfOfTheLanes, totalLanes).map(({id}) => id)
         this.eliminated = this.continuing.filter(({id}) => loserIds.includes(id))
         this.continuing = this.continuing.filter(({id}) => !loserIds.includes(id))
+
+        this.$('.action').classList.add('hidden')
       })
 
       if (this.finalHeat) {
