@@ -74,7 +74,7 @@ const styles = css`
   }
 
   .hidden {
-    display: none;
+    display: none !important;
   }
 
   .best-personal-time {
@@ -209,7 +209,7 @@ export default class CarLeaderBoard extends WebComponent {
 
   initUI () {
     const cars = Object.entries(this.cars)
-    this.$('#message').innerHTML = cars.length === 0 ? 'No cars have been registered yet, please visit the main page to register.' : ''
+    this.$('#message').innerHTML = cars.length === 0 ? 'No cars have been registered yet, please visit the <a href="/">main page</a> to register.' : ''
     this.$('#cars').innerHTML = ''
     cars.forEach(([id, carConfig]) => {
       console.log({ id, ...carConfig })
@@ -388,9 +388,21 @@ export default class CarLeaderBoard extends WebComponent {
       .fetch('/data/race', { method: 'POST', body: JSON.stringify(data), headers: { 'Content-Type': 'application/json' } })
       .then((res) => res.json())
       .then(({ downloadUrl }) => {
-        console.log({ downloadUrl })
+        // this line opens an API for easier testing
+        window.__last_csv_download_url = downloadUrl
+        
         downloadUrl && window.open(downloadUrl)
       })
+  }
+
+  onClickDeleteRaceData () {
+    const shouldClear = window.confirm(
+      'This action will remove all race and car data, are you sure you want to continue?'
+    )
+    if (shouldClear) {
+      localStorage.clear()
+      window.location.reload()
+    }
   }
 }
 

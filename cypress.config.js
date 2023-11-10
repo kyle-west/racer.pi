@@ -8,6 +8,7 @@ module.exports = defineConfig({
       config = dotenvPlugin(config, undefined, true)
       return config
     },
+    retries: 1,
   },
   videoCompression: false,
 });
