@@ -1,5 +1,14 @@
-import { interpolate } from './storage.js';
+import { interpolate as JSONinterpolate } from './storage.js';
 import { kebabToPascal } from './util.js';
+import globalStyles, { css } from './globalStyles.js';
+export { css }
+
+function interpolate (value) {
+  const json = JSONinterpolate(value)
+  if (json) return json
+  if (json === '') return true
+  return json || value
+}
 
 function cleanChildren (node) {
   while (node.firstChild) {
@@ -18,7 +27,8 @@ export function attach (node, Component, attrs = {}) {
 
 export function wc (...args) {
   const template = document.createElement('template')
-  template.innerHTML = String.raw(...args)
+  template.innerHTML = globalStyles
+  template.innerHTML += String.raw(...args)
   return () => template.content.cloneNode(true)
 }
 export function dom (...args) {
@@ -31,15 +41,14 @@ export function inline (value) {
   }
   return ''
 }
-export function css (...args) {
-  return `<style>${String.raw(...args)}</style>`
-}
 
 export class WebComponent extends HTMLElement {
   constructor(template, { defer } = {}) {
     super();
     this.template = template
-    this.attrs = {}
+    this.attrs = Object.fromEntries(
+      this.getAttributeNames().map(name => [name, interpolate(this.getAttribute(name))])
+    )
     this._shadowRoot = this.attachShadow({ mode: "open" });
     this.$ = (selector) => this._shadowRoot.querySelector(selector)
     this.$$ = (selector) => [...(this._shadowRoot.querySelectorAll(selector) || [])]

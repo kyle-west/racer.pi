@@ -1,6 +1,7 @@
 import { WebComponent, wc, css, dom, register, attach } from '../dom.js'
 import { localStorage } from '../storage.js';
 import { formatOrdinals } from '../util.js';
+import ClearDataButton from '../views/ClearDataButton.js';
 
 import '../debug.js'
 
@@ -160,8 +161,9 @@ const template = wc`
   <table id="cars"></table>
   <div id="after-race" class="hidden">
     <button name="download">Save Race & Download CSV</button>
-    <button name="delete-race-data">Delete All Data & Start New Race</button>
   </div>
+  <${ClearDataButton.is} id="clearEverything" all></${ClearDataButton.is}>
+  <${ClearDataButton.is} id="clearRaceData"></${ClearDataButton.is}>
 `
 
 const car = ({ id, name="", weight="" }) => dom`
@@ -393,16 +395,6 @@ export default class CarLeaderBoard extends WebComponent {
         
         downloadUrl && window.open(downloadUrl)
       })
-  }
-
-  onClickDeleteRaceData () {
-    const shouldClear = window.confirm(
-      'This action will remove all race and car data, are you sure you want to continue?'
-    )
-    if (shouldClear) {
-      localStorage.clear()
-      window.location.reload()
-    }
   }
 }
 

@@ -6,6 +6,7 @@ import CarConfig from './CarConfig.js';
 import LaneEventWC from './LaneEventWC.js';
 import TimerComponent from './Timer.js';
 import { deferredAction } from '../util.js';
+import ClearDataButton from './ClearDataButton.js';
 
 const totalLanes = env.LANE_COUNT
 
@@ -55,6 +56,8 @@ const template = wc`
 
     <button name="continue">Begin Finals</button>
   </div>
+
+  <${ClearDataButton.is}></${ClearDataButton.is}>
 `
 
 export default class FinalRound extends LaneEventWC {
