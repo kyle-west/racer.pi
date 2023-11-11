@@ -9,11 +9,11 @@ _npm='/usr/bin/npm'
 _python='/usr/bin/python'
 updatePathCommand='export PATH="/usr/bin/:$PATH'
 
-if [ -d /home/sushi/.local/share/fnm ]; then
-  eval `/home/sushi/.local/share/fnm/fnm env`
+if [ -d "$HOME/.local/share/fnm" ]; then
+  eval `$HOME/.local/share/fnm/fnm env`
   _node="$(/usr/bin/which node)"
   _npm="$(/usr/bin/which npm)"
-  updatePathCommand='eval `/home/sushi/.local/share/fnm/fnm env`; export PATH="/usr/bin/:/home/sushi/.local/share/fnm:$PATH"'
+  updatePathCommand="eval `$HOME/.local/share/fnm/fnm env`; export PATH="/usr/bin/:$HOME/.local/share/fnm:$PATH""
 fi
 
 # Run the node server, the python script
