@@ -8,7 +8,12 @@ fi
 echo "Installing desktop file... Requires sudo permissions to continue."
 cat ./.desktop/main.desktop | sed "s|{{location}}|$PWD|g" > /usr/share/applications/racer.desktop
 cp public/racer.pi.png /usr/share/pixmaps/racer-pi.png
-# cp .desktop/Racer-Pi.desktop "$HOME/Desktop/Racer-Pi.desktop"
+
+targetDesktop="/home/$(ls /home)/Desktop"
+
+if [ -d $targetDesktop ]; then
+  cp .desktop/Racer-Pi.desktop "$targetDesktop/Racer-Pi.desktop"
+fi
 
 xdg-desktop-menu forceupdate
 

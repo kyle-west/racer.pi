@@ -42,6 +42,10 @@ The following command will install the application as a _single click_ shortcut 
 sudo bash installToDesktop.sh
 ```
 
+Now the program should be available under the Games menu.
+
+![Screenshot](.desktop/example.png)
+
 # Application Architecture
 
 We want the track to have control of race starts and lane events. This may seem a little complicated for such a "simple" project, but it comes with three wins:
