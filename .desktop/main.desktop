@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Racer
+Comment=Open Racer.Pi
+Path={{location}}
+Exec=bash standalone.sh
+Terminal=false
+Type=Application
+Icon=racer-pi
+Categories=Game;

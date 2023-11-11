@@ -34,6 +34,18 @@ npm install;
 
 See `package.json` for avaliable `scripts`. Run `npm start` to run the fullstack, or `npm start:server` to run just the frontend parts.
 
+## Install to Desktop
+
+The following command will install the application as a _single click_ shortcut in the system menu and the desktop.
+
+```sh
+sudo bash installToDesktop.sh
+```
+
+Now the program should be available under the Games menu.
+
+![Screenshot](.desktop/example.png)
+
 # Application Architecture
 
 We want the track to have control of race starts and lane events. This may seem a little complicated for such a "simple" project, but it comes with three wins:
