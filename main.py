@@ -112,7 +112,7 @@ def run_race(server_port):
 
 if __name__ == "__main__":
     server_port = 5000
-    maxtime = 30
+    maxtime = 5
     #Map each pin number to GPIO pins
     startpin = 5
     lane1 = 6
