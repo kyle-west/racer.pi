@@ -47,6 +47,28 @@ const styles = css`
     transition: all 0.3s;
   }
 
+  td[data-manual="true"]::after {
+    content: ' *';
+    opacity: 0.6;
+    font-style: italic;
+  }
+
+  #edit-dialog {
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 16px;
+    min-width: 260px;
+  }
+
+  #edit-dialog label {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  #edit-dialog [name="edit-time"] {
+    width: 100px;
+  }
+
   #timer {
     font-size: 30px;
     white-space: pre-wrap;
@@ -59,6 +81,13 @@ const template = wc`
   <pre id="timer"></pre>
   <div id="heats"></div>
   <${ClearDataButton.is}></${ClearDataButton.is}>
+  <dialog id="edit-dialog">
+    <h3 id="edit-dialog-title">Edit Lane</h3>
+    <label>Time (s): <input type="number" name="edit-time" step="0.001" min="0" /></label>
+    <br/>
+    <button name="confirm-edit">Save</button>
+    <button name="cancel-edit" type="button">Cancel</button>
+  </dialog>
 `
 
 export default class EliminationRound extends WebComponent {
@@ -67,6 +96,7 @@ export default class EliminationRound extends WebComponent {
     super(template)
     this.roundNumber = +this.getAttribute('number')
     console.log('ROUND:', this.roundNumber)
+    this.manualLanes = new Set()
     this.continuing = Object
       .values(localStorage.get('continuing', localStorage.get(CarConfig.is, {})))
       .map(x => ({ times: [], ...x }))
@@ -121,7 +151,7 @@ export default class EliminationRound extends WebComponent {
         <h2>Heat ${this.heatNumber}</h2>
         <table>
           <thead>
-            <tr><th>Assignment</th><th>Car Name</th><th>Time</th><th>Place</th><th>Status</th></tr>
+            <tr><th>Assignment</th><th>Car Name</th><th>Time</th><th>Place</th><th>Status</th><th></th></tr>
           </thead>
           <tbody>
           ${inline(Object.entries(this.laneAssignments).map(([laneNumber, { name }]) => `
@@ -131,6 +161,7 @@ export default class EliminationRound extends WebComponent {
               <td id="heat-${this.heatNumber}-lane-${laneNumber}-time"></td>
               <td id="heat-${this.heatNumber}-lane-${laneNumber}-place"></td>
               <td id="heat-${this.heatNumber}-lane-${laneNumber}-status"></td>
+              <td><button name="edit-lane" data-heat="${this.heatNumber}" data-lane="${laneNumber}" no-styles title="Edit">✏</button></td>
             </tr>
           `))}
           </tbody>
@@ -162,6 +193,14 @@ export default class EliminationRound extends WebComponent {
       Object.entries(lanes).filter(([lane]) => this.laneAssignments[lane])
     )
 
+    // Preserve manually-edited times so server updates don't overwrite them
+    for (const key of this.manualLanes) {
+      const [h, l] = key.split('-')
+      if (+h === this.heatNumber && activeLanes[l] !== undefined && this.laneData?.[l] !== undefined) {
+        activeLanes[l] = this.laneData[l]
+      }
+    }
+
     this.$('.action').classList.remove('hidden')
     this.laneData = activeLanes
     const laneEntries = Object.entries(activeLanes).sort(([_,a],[__,b]) => a-b)
@@ -175,8 +214,12 @@ export default class EliminationRound extends WebComponent {
     laneEntries.forEach(([laneNumber, time], idx) => {
       if (!this.$(`#heat-${this.heatNumber}-lane-${laneNumber}`)) return // for partially full track
 
-      this.$(`#heat-${this.heatNumber}-lane-${laneNumber}-time`).innerHTML = time+ 's'
-      
+      const timeCell = this.$(`#heat-${this.heatNumber}-lane-${laneNumber}-time`)
+      timeCell.innerHTML = time + 's'
+      if (this.manualLanes.has(`${this.heatNumber}-${laneNumber}`)) {
+        timeCell.dataset.manual = 'true'
+      }
+
       const order = formatOrdinals(idx + 1)
       this.$(`#heat-${this.heatNumber}-lane-${laneNumber}-place`).innerHTML = order
 
@@ -194,6 +237,67 @@ export default class EliminationRound extends WebComponent {
   onRaceEnd () {
     this.$('.action [name="accept"]').classList.remove('hidden')
     this._unsubmitted = true
+  }
+
+  onClickEditLane (evt) {
+    const heat = +evt.element.dataset.heat
+    const lane = +evt.element.dataset.lane
+    this._editingHeat = heat
+    this._editingLane = lane
+
+    this.$('#edit-dialog-title').innerHTML = `Edit Heat ${heat} — Lane ${lane}`
+
+    let currentTime
+
+    if (heat === this.heatNumber) {
+      currentTime = this.laneData?.[lane]
+    } else {
+      const heatData = localStorage.get('races')?.round?.[this.roundNumber]?.heat?.[heat] || {}
+      currentTime = heatData[lane]?.time
+    }
+
+    this._editingOriginalTime = currentTime
+    this.$('[name="edit-time"]').value = currentTime ?? ''
+
+    this.$('#edit-dialog').showModal()
+  }
+
+  onClickConfirmEdit () {
+    const heat = this._editingHeat
+    const lane = this._editingLane
+    const newTimeStr = this.$('[name="edit-time"]').value
+    const newTime = newTimeStr !== '' ? +newTimeStr : null
+
+    this.$('#edit-dialog').close()
+
+    const isCurrent = heat === this.heatNumber
+
+    if (newTime !== null && newTime !== this._editingOriginalTime) {
+      if (isCurrent) {
+        if (!this.laneData?.[lane]) {
+          this.manualLanes.add(`${heat}-${lane}`)
+          fetch(`/gpio/time?lane=${lane}&time=${newTime}`, { method: 'POST' })
+        } else {
+          this.laneData[lane] = newTime
+          this.manualLanes.add(`${heat}-${lane}`)
+          this.onRaceUpdate({ detail: { lanes: this.laneData } })
+        }
+      } else {
+        localStorage.merge('races', {
+          round: { [this.roundNumber]: { heat: { [heat]: { [lane]: { time: newTime } } } } }
+        })
+        const timeCell = this.$(`#heat-${heat}-lane-${lane}-time`)
+        if (timeCell) {
+          timeCell.innerHTML = `${newTime}s`
+          timeCell.dataset.manual = 'true'
+        }
+        this.manualLanes.add(`${heat}-${lane}`)
+      }
+    }
+  }
+
+  onClickCancelEdit () {
+    this.$('#edit-dialog').close()
   }
 
   onClickRestart () {

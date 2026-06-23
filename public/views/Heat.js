@@ -41,6 +41,12 @@ const styles = css`
   td {
     transition: all 0.3s;
   }
+
+  td[data-manual="true"]::after {
+    content: ' *';
+    opacity: 0.6;
+    font-style: italic;
+  }
 `
 
 export default class Heat extends WebComponent {
@@ -54,7 +60,7 @@ export default class Heat extends WebComponent {
         <h2>Heat ${this.attrs.heat}</h2>
         <table>
           <thead>
-            <tr><th>Assignment</th><th>Car Name</th><th>Time</th><th>Place</th><th>Status</th></tr>
+            <tr><th>Assignment</th><th>Car Name</th><th>Time</th><th>Place</th><th>Status</th><th></th></tr>
           </thead>
           <tbody>
           ${inline(Object.entries(this._laneAssignments).map(([laneNumber, { name }]) => `
@@ -64,6 +70,7 @@ export default class Heat extends WebComponent {
               <td id="lane-${laneNumber}-time"></td>
               <td id="lane-${laneNumber}-place"></td>
               <td id="lane-${laneNumber}-status"></td>
+              <td><button name="edit-lane" data-heat="${this.attrs.heat}" data-lane="${laneNumber}" no-styles title="Edit">✏</button></td>
             </tr>
           `))}
           </tbody>
@@ -83,12 +90,16 @@ export default class Heat extends WebComponent {
     return rank < halfOfTheLanes ? win : 'Eliminated'
   }
 
-  updateLaneInfo (laneEntries) {  
+  updateLaneInfo (laneEntries) {
     laneEntries.forEach(([laneNumber, time], idx) => {
       if (!this.$(`#lane-${laneNumber}`)) return // for partially full track
 
-      this.$(`#lane-${laneNumber}-time`).innerHTML = time+ 's'
-      
+      const timeCell = this.$(`#lane-${laneNumber}-time`)
+      timeCell.innerHTML = time + 's'
+      if (this.manualLanes?.has(`${this.attrs.heat}-${laneNumber}`)) {
+        timeCell.dataset.manual = 'true'
+      }
+
       const rank = idx + 1
       const order = formatOrdinals(rank)
       this.$(`#lane-${laneNumber}-place`).innerHTML = order
@@ -97,6 +108,14 @@ export default class Heat extends WebComponent {
       this.$(`#lane-${laneNumber}-status`).innerHTML = status
       this.$(`#lane-${laneNumber}`).classList.add(status.replace(/\W+/g, '-'))
     })
+  }
+
+  onClickEditLane (evt) {
+    this.dispatchEvent(new CustomEvent('lane-edit-request', {
+      bubbles: true,
+      composed: true,
+      detail: { heat: +evt.element.dataset.heat, lane: +evt.element.dataset.lane }
+    }))
   }
 
   restart () {

@@ -14,6 +14,22 @@ const styles = css`
   .hidden {
     display: none;
   }
+
+  #edit-dialog {
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 16px;
+    min-width: 260px;
+  }
+
+  #edit-dialog label {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  #edit-dialog [name="edit-time"] {
+    width: 100px;
+  }
 `
 
 class FinalHeat extends Heat {
@@ -58,16 +74,26 @@ const template = wc`
   </div>
 
   <${ClearDataButton.is}></${ClearDataButton.is}>
+  <dialog id="edit-dialog">
+    <h3 id="edit-dialog-title">Edit Lane</h3>
+    <label>Time (s): <input type="number" name="edit-time" step="0.001" min="0" /></label>
+    <br/>
+    <button name="confirm-edit">Save</button>
+    <button name="cancel-edit" type="button">Cancel</button>
+  </dialog>
 `
 
 export default class FinalRound extends LaneEventWC {
   static is = 'final-round';
-  constructor () { 
+  constructor () {
     super(template)
     const racers = localStorage.get(CarConfig.is)
     this.finalists = localStorage.get('finalists', []).map(id => racers[id])
+    this.manualLanes = new Set()
 
     this.loadExistingData()
+
+    this.addEventListener('lane-edit-request', (evt) => this._openEditDialog(evt.detail))
   }
 
   onClickContinue() {
@@ -123,6 +149,7 @@ export default class FinalRound extends LaneEventWC {
     heatElem.setAttribute('round', 3)
     heatElem.setAttribute('heat', this.heatNumber)
     heatElem.laneAssignments = this.laneAssignments
+    heatElem.manualLanes = this.manualLanes
     this.currentHeat = heatElem
 
     this.$('#current-heat').prepend(heatElem)
@@ -136,6 +163,14 @@ export default class FinalRound extends LaneEventWC {
     const activeLanes = Object.fromEntries(
       Object.entries(lanes).filter(([lane]) => this.laneAssignments[lane])
     )
+
+    // Preserve manually-edited times so server updates don't overwrite them
+    for (const key of this.manualLanes) {
+      const [h, l] = key.split('-')
+      if (+h === this.heatNumber && activeLanes[l] !== undefined && this.laneData?.[l] !== undefined) {
+        activeLanes[l] = this.laneData[l]
+      }
+    }
 
     this.laneData = activeLanes
     const laneEntries = Object.entries(activeLanes).sort(([_,a],[__,b]) => a-b)
@@ -180,6 +215,71 @@ export default class FinalRound extends LaneEventWC {
         )
       }
     })
+  }
+
+  _openEditDialog ({ heat, lane }) {
+    this._editingHeat = heat
+    this._editingLane = lane
+
+    this.$('#edit-dialog-title').innerHTML = `Edit Final Heat ${heat} — Lane ${lane}`
+
+    let currentTime
+
+    if (heat === this.heatNumber) {
+      currentTime = this.laneData?.[lane]
+    } else {
+      const heatData = localStorage.get('finals')?.heat?.[heat] || {}
+      currentTime = heatData[lane]?.time
+    }
+
+    this._editingOriginalTime = currentTime
+    this.$('[name="edit-time"]').value = currentTime ?? ''
+
+    this.$('#edit-dialog').showModal()
+  }
+
+  onClickConfirmEdit () {
+    const heat = this._editingHeat
+    const lane = this._editingLane
+    const newTimeStr = this.$('[name="edit-time"]').value
+    const newTime = newTimeStr !== '' ? +newTimeStr : null
+
+    this.$('#edit-dialog').close()
+
+    const isCurrent = heat === this.heatNumber
+
+    if (newTime !== null && newTime !== this._editingOriginalTime) {
+      if (isCurrent) {
+        if (!this.laneData?.[lane]) {
+          this.manualLanes.add(`${heat}-${lane}`)
+          fetch(`/gpio/time?lane=${lane}&time=${newTime}`, { method: 'POST' })
+        } else {
+          this.laneData[lane] = newTime
+          this.manualLanes.add(`${heat}-${lane}`)
+          this.onRaceUpdate({ detail: { lanes: this.laneData } })
+        }
+      } else {
+        localStorage.merge('finals', {
+          heat: { [heat]: { [lane]: { time: newTime } } }
+        })
+        const pastHeat = this._getPastHeatElement(heat)
+        const timeCell = pastHeat?.$?.(`#lane-${lane}-time`)
+        if (timeCell) {
+          timeCell.innerHTML = `${newTime}s`
+          timeCell.dataset.manual = 'true'
+        }
+        this.manualLanes.add(`${heat}-${lane}`)
+      }
+    }
+  }
+
+  onClickCancelEdit () {
+    this.$('#edit-dialog').close()
+  }
+
+  _getPastHeatElement (heat) {
+    return [...this.$('#heats').querySelectorAll('final-heat')]
+      .find(el => +el.getAttribute('heat') === heat) || null
   }
 
   loadExistingData () {
