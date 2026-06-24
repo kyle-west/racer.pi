@@ -1,10 +1,55 @@
 import env from '/env'
-import { WebComponent, wc, dom, register } from '../dom.js'
+import { WebComponent, wc, dom, register, css } from '../dom.js'
 
 const totalLanes = env.LANE_COUNT
 const halfOfTheLanes = Math.floor(totalLanes/2)
 
+const styles = css`
+  :host {
+    display: block;
+  }
+  h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text, #0f172a);
+    margin: 2rem 0 0.5rem;
+  }
+  p {
+    color: var(--text, #0f172a);
+    margin: 0 0 1rem;
+  }
+  ul {
+    margin: 0 0 1rem;
+    padding-left: 1.5rem;
+  }
+  li {
+    margin-bottom: 0.25rem;
+  }
+  a {
+    color: var(--accent, #4263eb);
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  button[name="continue"] {
+    margin-top: 0.75rem;
+    padding: 10px 28px;
+    background-color: var(--accent, #4263eb);
+    color: white;
+    border-color: var(--accent, #4263eb);
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+  button[name="continue"]:hover {
+    background-color: var(--accent-hover, #3451d1);
+    border-color: var(--accent-hover, #3451d1);
+    box-shadow: 0 2px 8px rgba(66, 99, 235, 0.25);
+  }
+`
+
 const template = wc`
+  ${styles}
   <h1>Welcome!</h1>
 
   <h2>Double Elimination Race Format</h2>

@@ -6,135 +6,229 @@ import ClearDataButton from '../views/ClearDataButton.js';
 import '../debug.js'
 
 const styles = css`
-  #cars, #after-race {
-    padding: 0;
-    max-width: 800px;
+  :host {
+    display: block;
+  }
+
+  h1 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text, #0f172a);
+    margin: 0 0 1.5rem;
+  }
+
+  #message {
+    color: var(--text-muted, #64748b);
+    margin-bottom: 1rem;
+  }
+  #message a {
+    color: var(--accent, #4263eb);
+    text-decoration: none;
+  }
+  #message a:hover {
+    text-decoration: underline;
+  }
+
+  #cars {
     width: 100%;
+    max-width: 860px;
     margin: 0 auto;
-    border-collapse: collapse;
-  }
-
-  #after-race {
-    margin: 20px auto;
-    display: flex;
-  }
-
-  [name="download"] {
-    background-color: lightblue;
-  }
-
-  [name="delete-race-data"] {
-    margin-left: auto;
-    background-color: red;
-    color: white;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: var(--radius-lg, 10px);
+    overflow: hidden;
+    box-shadow: var(--shadow, 0 1px 4px rgba(0,0,0,0.08));
   }
 
   .car {
-    border: 1px solid #ccc;
-    margin-bottom: 2rem;
+    background: var(--surface, #fff);
+    border-bottom: 1px solid var(--border, #e2e8f0);
+    transition: background-color 0.2s;
+  }
+  .car:last-child {
+    border-bottom: none;
+  }
+
+  td {
+    padding: 1rem 1.25rem;
+    vertical-align: middle;
+  }
+
+  .place {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted, #64748b);
+    white-space: nowrap;
+    width: 80px;
+    text-align: center;
+  }
+
+  .title h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text, #0f172a);
   }
 
   .weight {
-    font-weight: normal;
-  }
-  
-  td {
-    padding: 1rem;
+    font-weight: 400;
+    font-size: 0.875rem;
+    color: var(--text-muted, #64748b);
   }
 
-  .car .stats {
-    font-size: 1.25rem;
-  }
-
-  .car .bestTime::after,
-  .car .averageTime::after {
-    margin-left: 0.5rem;
-    font-size: 1rem;
-    vertical-align: top;
-    padding: 0.25rem;
-    border-radius: 0.5rem;
-  }
-
-  .car .bestTime::after {
-    content: 'fastest';
-    border: 1px solid grey;
-  }
-
-  .car .averageTime::after {
-    content: 'average';
-    border: 1px solid grey;
+  .stats {
+    white-space: nowrap;
+    min-width: 140px;
   }
 
   .stats-container {
     display: flex;
-    height: 100%;
-    width: 100%;
     flex-direction: column;
-    justify-content: center;
-    gap: 0.5rem;
+    gap: 0.3rem;
+  }
+
+  .bestTime, .averageTime {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text, #0f172a);
+  }
+
+  .bestTime::after, .averageTime::after {
+    font-size: 0.68rem;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 20px;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+  }
+
+  .bestTime::after {
+    content: 'fastest';
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+  }
+
+  .averageTime::after {
+    content: 'average';
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+  }
+
+  .times {
+    color: var(--text-muted, #64748b);
+    font-size: 0.82rem;
+    font-family: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
+    line-height: 1.6;
+  }
+
+  .best-personal-time {
+    font-weight: 700;
+    color: var(--text, #0f172a);
+    text-decoration: underline;
+  }
+
+  .points {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--text-muted, #64748b);
+    white-space: nowrap;
   }
 
   .hidden {
     display: none !important;
   }
 
-  .best-personal-time {
-    text-decoration: underline;
-    font-weight: bold;
-  }
-
   .tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 2px;
-    color: black;
-    font-family: Consolas, 'Courier New', Courier, monospace;
-    font-weight: bold;
+    gap: 4px;
+    margin-top: 0.3rem;
   }
 
   .tags > * {
-    font-size: 0.75rem;
-    padding: 0.25rem;
-    border-radius: 0.5rem;
-  }
-
-  .lowest-time {
-    background-color: lightgreen;
-  }
-
-  .lowest-average {
-    background-color: lightblue;
-  }
-
-  .lightest-car {
-    background-color: lightyellow;
-  }
-
-  .heaviest-car {
-    background-color: lightgray;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.02em;
   }
 
   .finalist-badge {
-    background-color: darkgreen;
+    background-color: var(--accent, #4263eb);
     color: white;
   }
 
   .eliminated {
-    background-color: red;
-    color: white;
+    background-color: #fee2e2;
+    color: #dc2626;
   }
 
-  .finalist {
-    border: 2px solid black;
+  .lowest-time {
+    background-color: #dcfce7;
+    color: #166534;
+  }
+
+  .lowest-average {
+    background-color: #dbeafe;
+    color: #1e40af;
+  }
+
+  .lightest-car {
+    background-color: #fef9c3;
+    color: #92400e;
+  }
+
+  .heaviest-car {
+    background-color: #f1f5f9;
+    color: #475569;
+  }
+
+  .finalist td:first-child {
+    box-shadow: inset 3px 0 0 var(--accent, #4263eb);
   }
 
   .place-1 {
-    background-color: darkblue;
-    color: white;
+    background-color: #fffbeb;
+  }
+  .place-1 .place {
+    color: #b45309;
   }
 
-  .place-2, .place-3 {
-    background-color: gold;
+  .place-2 {
+    background-color: #f8fafc;
+  }
+  .place-2 .place {
+    color: #475569;
+  }
+
+  .place-3 {
+    background-color: #fff7ed;
+  }
+  .place-3 .place {
+    color: #c2410c;
+  }
+
+  #after-race {
+    max-width: 860px;
+    margin: 1.25rem auto;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  [name="download"] {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    border-color: #bfdbfe;
+    font-weight: 500;
+  }
+  [name="download"]:hover {
+    background-color: #dbeafe;
+    border-color: #93c5fd;
   }
 `
 
@@ -157,6 +251,7 @@ function getPoints () {
 
 const template = wc`
   ${styles}
+  <h1>Leaderboard</h1>
   <div id="message"></div>
   <table id="cars"></table>
   <div id="after-race" class="hidden">
@@ -335,7 +430,9 @@ export default class CarLeaderBoard extends WebComponent {
         this.$(`#${id}`).classList.remove(`place-${idx + 1}`)
       }
 
-      this.$(`#${id} .place`).innerHTML = completed ? `${formatOrdinals(idx + 1)} Place` : ''
+      const medals = ['/assets/medal-gold.svg', '/assets/medal-silver.svg', '/assets/medal-bronze.svg']
+      const medal = completed && idx < 3 ? `<img src="${medals[idx]}" style="display:block;width:2.4rem;height:2.4rem;margin:0 auto" alt="">` : ''
+      this.$(`#${id} .place`).innerHTML = completed ? `${medal}${formatOrdinals(idx + 1)} Place` : ''
 
       this.$(`#${id} .tags`).innerHTML = `
         ${finalistIds.includes(id) ? `<span class="finalist-badge">Finalist</span>` : ''}

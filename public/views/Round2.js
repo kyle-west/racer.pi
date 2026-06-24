@@ -1,11 +1,32 @@
 import env from '/env'
-import { WebComponent, wc, register } from '../dom.js'
+import { WebComponent, wc, register, css } from '../dom.js'
 import EliminationRound from './EliminationRound.js'
 
 const totalLanes = env.LANE_COUNT
 const halfOfTheLanes = Math.floor(totalLanes/2)
 
+const styles = css`
+  p {
+    color: var(--text, #0f172a);
+    margin: 0 0 1rem;
+    line-height: 1.65;
+  }
+  button[name="continue"] {
+    background-color: var(--accent, #4263eb);
+    color: white;
+    border-color: var(--accent, #4263eb);
+    font-weight: 600;
+    padding: 9px 22px;
+  }
+  button[name="continue"]:hover {
+    background-color: var(--accent-hover, #3451d1);
+    border-color: var(--accent-hover, #3451d1);
+    box-shadow: 0 2px 8px rgba(66, 99, 235, 0.25);
+  }
+`
+
 const template = wc`
+  ${styles}
   <h1>Second Elimination Round</h1>
 
   <${EliminationRound.is} number="2">

@@ -10,70 +10,203 @@ const totalLanes = env.LANE_COUNT
 const halfOfTheLanes = Math.floor(totalLanes/2)
 
 const styles = css`
+  :host {
+    display: block;
+  }
+
+  section {
+    margin-bottom: 2rem;
+  }
+
+  section h2 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted, #64748b);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 0.5rem;
+  }
+
   table {
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     width: 100%;
+    font-size: 0.9rem;
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: var(--radius-lg, 10px);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm, 0 1px 2px rgba(0,0,0,0.06));
   }
 
   table td, table th {
-    border: 1px solid #ddd;
-    padding: 4px;
+    border-bottom: 1px solid var(--border, #e2e8f0);
+    border-right: 1px solid var(--border, #e2e8f0);
+    padding: 10px 14px;
   }
 
-  table tr:nth-child(even) { background-color: #f2f2f2; }
-  table tr:hover { background-color: #ddd; }
+  table td:last-child, table th:last-child {
+    border-right: none;
+  }
+
+  table tbody tr:last-child td,
+  table tbody tr:last-child th {
+    border-bottom: none;
+  }
+
+  table tr:nth-child(even) { background-color: #f8fafc; }
+  table tr:hover { background-color: #f1f5f9; }
 
   table thead th {
-    padding-top: 6px;
-    padding-bottom: 6px;
+    padding: 10px 14px;
     text-align: left;
-    background-color: #333;
+    background-color: #1e293b;
     color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-bottom: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  table thead th:last-child {
+    border-right: none;
   }
 
   table tbody th {
     text-align: start;
+    font-weight: 500;
   }
 
-  tr.Continuing { background-color: lightblue !important; }
-  tr.Eliminated { background-color: lightpink !important; }
-  tr.Finalist   { background-color: lightgreen !important; }
+  tr.Continuing { background-color: #eff6ff !important; }
+  tr.Eliminated { background-color: #fff1f2 !important; }
+  tr.Finalist   { background-color: #f0fdf4 !important; }
 
   .hidden {
     display: none;
   }
 
   td {
-    transition: all 0.3s;
+    transition: background-color 0.25s, color 0.25s;
   }
 
   td[data-manual="true"]::after {
     content: ' *';
-    opacity: 0.6;
+    opacity: 0.5;
     font-style: italic;
+    font-size: 0.8em;
   }
 
-  #edit-dialog {
-    border: 1px solid #333;
-    border-radius: 4px;
-    padding: 16px;
-    min-width: 260px;
+  button[no-styles][name="edit-lane"] {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    opacity: 0.35;
+    padding: 2px 6px;
+    border-radius: var(--radius, 6px);
+    transition: opacity 0.15s, background-color 0.15s, filter 0.15s;
+  }
+  button[no-styles][name="edit-lane"] img {
+    filter: grayscale(1);
+    transition: filter 0.15s;
+  }
+  button[no-styles][name="edit-lane"]:hover {
+    opacity: 1;
+    background-color: var(--bg, #f8fafc);
+  }
+  button[no-styles][name="edit-lane"]:hover img {
+    filter: grayscale(0);
+  }
+  td:has(button[name="edit-lane"]) {
+    width: 1px;
+    white-space: nowrap;
   }
 
-  #edit-dialog label {
-    display: block;
-    margin-bottom: 10px;
+  .action {
+    display: flex;
+    gap: 0.25rem;
+    margin-top: 0.75rem;
   }
 
-  #edit-dialog [name="edit-time"] {
-    width: 100px;
+  button[name="accept"] {
+    background-color: var(--accent, #4263eb);
+    color: white;
+    border-color: var(--accent, #4263eb);
+    font-weight: 600;
+  }
+  button[name="accept"]:hover {
+    background-color: var(--accent-hover, #3451d1);
+    border-color: var(--accent-hover, #3451d1);
+    box-shadow: 0 2px 8px rgba(66, 99, 235, 0.25);
   }
 
   #timer {
-    font-size: 30px;
+    font-size: 1.75rem;
+    font-family: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
+    font-weight: 600;
+    color: var(--text, #0f172a);
+    margin: 1rem 0;
     white-space: pre-wrap;
+    letter-spacing: -0.01em;
   }
-  `
+
+  #edit-dialog {
+    border: none;
+    border-radius: var(--radius-lg, 10px);
+    padding: 1.5rem;
+    min-width: 280px;
+    background: var(--surface, white);
+    box-shadow: var(--shadow-md, 0 4px 16px rgba(0,0,0,0.12));
+  }
+  #edit-dialog::backdrop {
+    background: rgba(15, 23, 42, 0.35);
+    backdrop-filter: blur(2px);
+  }
+  #edit-dialog-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 1.25rem;
+    color: var(--text, #0f172a);
+  }
+  #edit-dialog label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    color: var(--text, #0f172a);
+  }
+  #edit-dialog [name="edit-time"] {
+    padding: 6px 10px;
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: var(--radius, 6px);
+    font-size: 0.875rem;
+    font-family: inherit;
+    width: 110px;
+    color: var(--text, #0f172a);
+    background: var(--bg, #f8fafc);
+    transition: border-color 0.15s;
+    outline: none;
+  }
+  #edit-dialog [name="edit-time"]:focus {
+    border-color: var(--accent, #4263eb);
+    background: white;
+  }
+  #edit-dialog br {
+    display: none;
+  }
+  #edit-dialog button[name="confirm-edit"] {
+    background-color: var(--accent, #4263eb);
+    color: white;
+    border-color: var(--accent, #4263eb);
+    font-weight: 600;
+  }
+  #edit-dialog button[name="confirm-edit"]:hover {
+    background-color: var(--accent-hover, #3451d1);
+    border-color: var(--accent-hover, #3451d1);
+  }
+`
   
 const template = wc`
   ${styles}
@@ -161,7 +294,7 @@ export default class EliminationRound extends WebComponent {
               <td id="heat-${this.heatNumber}-lane-${laneNumber}-time"></td>
               <td id="heat-${this.heatNumber}-lane-${laneNumber}-place"></td>
               <td id="heat-${this.heatNumber}-lane-${laneNumber}-status"></td>
-              <td><button name="edit-lane" data-heat="${this.heatNumber}" data-lane="${laneNumber}" no-styles title="Edit">✏</button></td>
+              <td><button name="edit-lane" data-heat="${this.heatNumber}" data-lane="${laneNumber}" no-styles><img src="/assets/pencil.svg" style="width:1rem;height:1rem;display:block;pointer-events:none" alt="Edit" title="Edit"></button></td>
             </tr>
           `))}
           </tbody>

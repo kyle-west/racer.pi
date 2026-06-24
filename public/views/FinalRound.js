@@ -11,24 +11,116 @@ import ClearDataButton from './ClearDataButton.js';
 const totalLanes = env.LANE_COUNT
 
 const styles = css`
+  :host {
+    display: block;
+  }
+
+  h1 {
+    margin-bottom: 0.25rem;
+  }
+
   .hidden {
     display: none;
   }
 
+  .action {
+    display: flex;
+    gap: 0.25rem;
+    margin-top: 0.75rem;
+  }
+
+  button[name="accept"] {
+    background-color: var(--accent, #4263eb);
+    color: white;
+    border-color: var(--accent, #4263eb);
+    font-weight: 600;
+  }
+  button[name="accept"]:hover {
+    background-color: var(--accent-hover, #3451d1);
+    border-color: var(--accent-hover, #3451d1);
+    box-shadow: 0 2px 8px rgba(66, 99, 235, 0.25);
+  }
+
+  #heats p {
+    margin: 0 0 0.75rem;
+    color: var(--text, #0f172a);
+    line-height: 1.65;
+  }
+  #heats ul {
+    margin: 0 0 1rem;
+    padding-left: 1.5rem;
+  }
+  #heats li {
+    margin-bottom: 0.25rem;
+  }
+  button[name="continue"] {
+    margin-top: 0.5rem;
+    background-color: var(--accent, #4263eb);
+    color: white;
+    border-color: var(--accent, #4263eb);
+    font-weight: 600;
+    padding: 9px 22px;
+  }
+  button[name="continue"]:hover {
+    background-color: var(--accent-hover, #3451d1);
+    border-color: var(--accent-hover, #3451d1);
+    box-shadow: 0 2px 8px rgba(66, 99, 235, 0.25);
+  }
+
   #edit-dialog {
-    border: 1px solid #333;
-    border-radius: 4px;
-    padding: 16px;
-    min-width: 260px;
+    border: none;
+    border-radius: var(--radius-lg, 10px);
+    padding: 1.5rem;
+    min-width: 280px;
+    background: var(--surface, white);
+    box-shadow: var(--shadow-md, 0 4px 16px rgba(0,0,0,0.12));
   }
-
+  #edit-dialog::backdrop {
+    background: rgba(15, 23, 42, 0.35);
+    backdrop-filter: blur(2px);
+  }
+  #edit-dialog-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 1.25rem;
+    color: var(--text, #0f172a);
+  }
   #edit-dialog label {
-    display: block;
-    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    color: var(--text, #0f172a);
   }
-
   #edit-dialog [name="edit-time"] {
-    width: 100px;
+    padding: 6px 10px;
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: var(--radius, 6px);
+    font-size: 0.875rem;
+    font-family: inherit;
+    width: 110px;
+    color: var(--text, #0f172a);
+    background: var(--bg, #f8fafc);
+    transition: border-color 0.15s;
+    outline: none;
+  }
+  #edit-dialog [name="edit-time"]:focus {
+    border-color: var(--accent, #4263eb);
+    background: white;
+  }
+  #edit-dialog br {
+    display: none;
+  }
+  #edit-dialog button[name="confirm-edit"] {
+    background-color: var(--accent, #4263eb);
+    color: white;
+    border-color: var(--accent, #4263eb);
+    font-weight: 600;
+  }
+  #edit-dialog button[name="confirm-edit"]:hover {
+    background-color: var(--accent-hover, #3451d1);
+    border-color: var(--accent-hover, #3451d1);
   }
 `
 

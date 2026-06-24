@@ -5,15 +5,104 @@ import { localStorage } from '../storage.js';
 import ClearDataButton from './ClearDataButton.js';
 
 const styles = css`
+  :host {
+    display: block;
+  }
+  p {
+    color: var(--text-muted, #64748b);
+    margin: 0 0 1.25rem;
+  }
+  ol {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0.5rem;
+  }
+  .car {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    background: var(--surface, #fff);
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: var(--radius, 6px);
+    margin-bottom: 0.5rem;
+  }
+  .car label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.875rem;
+    color: var(--text-muted, #64748b);
+  }
+  .car input {
+    padding: 5px 10px;
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: var(--radius, 6px);
+    font-size: 0.875rem;
+    font-family: inherit;
+    color: var(--text, #0f172a);
+    background: var(--bg, #f8fafc);
+    transition: border-color 0.15s, background-color 0.15s;
+    outline: none;
+  }
+  .car input:focus {
+    border-color: var(--accent, #4263eb);
+    background: white;
+  }
+  .car input[name="car-name"] {
+    width: 160px;
+  }
+  .car input[name="car-weight"] {
+    width: 68px;
+  }
+  button[no-styles][name="remove-car"] {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid var(--border, #e2e8f0);
+    background: none;
+    color: var(--text-muted, #64748b);
+    cursor: pointer;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin-left: auto;
+    transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+  }
+  button[no-styles][name="remove-car"]:hover {
+    background-color: #fef2f2;
+    color: #dc2626;
+    border-color: #fecaca;
+  }
   .button-row {
     display: flex;
     align-items: center;
+    margin-top: 0.75rem;
   }
-
+  button[name="start-race"] {
+    background-color: var(--accent, #4263eb) !important;
+    color: white !important;
+    border-color: var(--accent, #4263eb) !important;
+    font-weight: 600;
+  }
+  button[name="start-race"]:hover {
+    background-color: var(--accent-hover, #3451d1) !important;
+    border-color: var(--accent-hover, #3451d1) !important;
+    box-shadow: 0 2px 8px rgba(66, 99, 235, 0.25);
+  }
   [name="clear"] {
-    background-color: red;
-    color: white;
+    background-color: #fef2f2;
+    color: #dc2626;
+    border-color: #fecaca;
     margin-left: auto;
+  }
+  [name="clear"]:hover {
+    background-color: #fee2e2;
+    border-color: #fca5a5;
+    box-shadow: none;
   }
 `
 

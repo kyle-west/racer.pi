@@ -2,17 +2,26 @@ import { WebComponent, dom, css, register } from '../dom.js'
 import { localStorage } from '../storage.js';
 
 const styles = css`
-  button.delete-button {
-    margin: 50px;
-    float: right;
-    border: 1px solid red;
-    opacity: 0.3;
+  :host {
+    display: block;
+    text-align: right;
+    margin-top: 1rem;
   }
-  
+  button.delete-button {
+    border: 1px solid #fecaca;
+    background: transparent;
+    color: #dc2626;
+    font-size: 0.8rem;
+    opacity: 0.45;
+    padding: 6px 14px;
+    transition: background-color 0.15s, border-color 0.15s, opacity 0.15s, box-shadow 0.15s;
+  }
   button.delete-button:hover {
-    background-color: red;
-    color: white;
+    background-color: #fef2f2;
+    border-color: #f87171;
+    color: #b91c1c;
     opacity: 1;
+    box-shadow: none;
   }
 `
 
