@@ -85,8 +85,8 @@ flowchart TD
   gpio-- Notifies Race Start -->server;
   client-- Store Race Results to FS -->server;
   ws-client-- Realtime Race Results -->client;
-  ws-server-- Lane States -.->ws-client
-  server-- Lane States -.->ws-server;
+  ws-server -. Lane States .-> ws-client
+  server -. Lane States .-> ws-server;
   server-- Converts Race Data -->csv;
   participants-->client;
 ```
